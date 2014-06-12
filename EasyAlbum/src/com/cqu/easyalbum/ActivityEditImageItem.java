@@ -3,11 +3,13 @@ package com.cqu.easyalbum;
 import android.app.Activity;
 import android.os.Bundle;
 
-public class MainActivity extends Activity {
-
+public class ActivityEditImageItem extends Activity{
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.layout_main_activity);
+		setContentView(R.layout.layout_edit_imageitem);
 	}
+
 }

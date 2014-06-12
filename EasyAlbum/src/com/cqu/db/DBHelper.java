@@ -1,5 +1,6 @@
 package com.cqu.db;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -17,11 +18,31 @@ public class DBHelper extends SQLiteOpenHelper{
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// TODO Auto-generated method stub
-		String sqlAlbum="create table Album(id integer primary key autoincrement, name varchar(50) not null, description varchar(100))";
-		String sqlImageItem="create table ImageItem(id integer primary key autoincrement, albumid integer not null, name varchar(100) not null, path varchar(200) not null, foreign key(albumid) references Album(id))";
+		String sqlAlbum="create table Album(id integer primary key autoincrement, name varchar(50) not null)";
+		String sqlImageItem="create table ImageItem(id integer primary key autoincrement, albumid integer not null, path varchar(200) not null, foreign key(albumid) references Album(id))";
 		
 		db.execSQL(sqlAlbum);
 		db.execSQL(sqlImageItem);
+		
+		initData(db);
+	}
+	
+	private void initData(SQLiteDatabase db)
+	{
+		db.beginTransaction();
+		try
+		{
+			for(int i=0;i<200;i++)
+			{
+				ContentValues cv=new ContentValues();
+				cv.put("name", "相册"+(i+1));
+				db.insert("Album", null, cv);
+			}
+			db.setTransactionSuccessful();
+		}finally
+		{
+			db.endTransaction();
+		}
 	}
 
 	@Override
