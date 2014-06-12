@@ -7,6 +7,8 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="19" />
+    
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -31,6 +33,12 @@
         
         <activity android:name="com.cqu.easyalbum.ActivityEditImageItem"
             android:label="@string/labe_edit_imageitem" />
+        
+        <activity android:name="com.cqu.filepicker.FilePicker"
+            android:label="@string/labe_add_image" />
+        
+        <activity android:name="com.cqu.easyalbum.SimpleImageViewer"
+            android:label="@string/labe_view_image" />
     </application>
 
 </manifest>

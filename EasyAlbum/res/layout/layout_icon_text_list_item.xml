@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <FrameLayout
+        android:id="@+id/flBgSelection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true" />
+    
+    <ImageView
+        android:id="@+id/ivIcon"
+        android:layout_width="@dimen/default_bar_height"
+        android:layout_height="@dimen/default_bar_height"
+        android:layout_marginLeft="@dimen/default_gap"
+        android:scaleType="centerInside"
+        android:padding="3dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/folder"
+        android:contentDescription="@string/app_name" />
+    
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/ivIcon"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="@dimen/default_gap"
+        android:layout_marginRight="@dimen/default_gap"
+        android:text="@string/app_name" />
+
+</RelativeLayout>

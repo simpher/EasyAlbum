@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 public class ItemListAdapter extends BaseAdapter{
 	
-private LayoutInflater mInflater;
+    private LayoutInflater mInflater;
 	
 	private OperationListener opListener;
 	

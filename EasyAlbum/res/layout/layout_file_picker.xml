@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/rlOperations"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/default_bar_height" >
+
+        <TextView
+            android:id="@+id/tvCurPath"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/default_gap"
+            android:layout_marginRight="@dimen/default_gap"
+            android:gravity="center_vertical"
+            android:layout_toLeftOf="@+id/flVerticalLine"
+            android:text="@string/app_name"
+            android:ellipsize="end"
+            android:background="@drawable/textview_button_selector"
+            android:clickable="true" />
+        
+        <FrameLayout
+            android:id="@+id/flVerticalLine"
+            android:layout_width="1px"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/tvBackToparent"
+            android:background="@color/light_gray" />
+        
+        <TextView
+            android:id="@+id/tvBackToparent"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/default_gap"
+            android:text="@string/back_to_parent"
+            android:background="@drawable/textview_button_selector" />
+    </RelativeLayout>
+    
+    <FrameLayout
+        android:id="@+id/flHLine1"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_below="@+id/rlOperations"
+        android:background="@color/light_gray" />
+
+    <ListView
+        android:id="@+id/listFiles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/flHLine2"
+        android:layout_below="@+id/flHLine1" >
+    </ListView>
+    
+    <FrameLayout
+        android:id="@+id/flHLine2"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_above="@+id/llOkCancel"
+        android:background="@color/light_gray" />
+
+    <LinearLayout
+        android:id="@+id/llOkCancel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/default_bar_height"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/tvCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/textview_button_selector"
+            android:gravity="center"
+            android:text="@string/btn_cancel" />
+
+        <FrameLayout
+            android:layout_width="1px"
+            android:layout_height="match_parent"
+            android:background="@color/light_gray" />
+
+        <TextView
+            android:id="@+id/tvOk"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/textview_button_selector"
+            android:gravity="center"
+            android:text="@string/btn_ok" />
+    </LinearLayout>
+
+</RelativeLayout>
