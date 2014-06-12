@@ -2,7 +2,19 @@
 <resources>
 
     <string name="app_name">EasyAlbum</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="table_search_hint">请输入搜索字符串</string>
+    <string name="search">搜索</string>
+    <string name="previous_page">上一页</string>
+    <string name="next_page">下一页</string>
+    <string name="jump_to_a_page">跳转</string>
+    <string name="add_table_field">+</string>
+    <string name="decrease_number">-</string>
+    <string name="increase_number">+</string>
+    <string name="btn_cancel">取消</string>
+    <string name="btn_ok">确定</string>
+    <string name="more_operations">></string>
+    
+    <string name="page_number_indicator">第1页 共3页</string>
+    <string name="index_one">1</string>
 
 </resources>
