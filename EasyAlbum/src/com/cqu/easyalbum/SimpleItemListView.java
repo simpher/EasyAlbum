@@ -13,7 +13,7 @@ public abstract class SimpleItemListView extends ItemListPageView{
 	private final int VIEW_MODE_ALL_DATA=0;
 	private final int VIEW_MODE_SEARCH_DATA=1;
 	
-	private final String HEAD_OPERATION_FOR_VIEW_MODE_ALL_DATA="添加相册";
+	protected String headOperation="";
 	private final String HEAD_OPERATION_FOR_VIEW_MODE_SEARCH_DATA="退出搜索视图";
 	
 	private DataModel.PageModel pageModel=null;
@@ -79,7 +79,7 @@ public abstract class SimpleItemListView extends ItemListPageView{
 		
 		if(dataModel==null)
 		{
-			dataModel=dao.getItems(dbManager, pageModel, pageIndex, null);
+			dataModel=dao.getItems(dbManager, pageModel, pageIndex, parent);
 			if(dataModel!=null)
 			{
 				itemPage=(DataItem[]) dataModel.getPage(pageIndex);
@@ -89,21 +89,21 @@ public abstract class SimpleItemListView extends ItemListPageView{
 			itemPage=(DataItem[]) dataModel.getPage(pageIndex);
 			if(itemPage==null)
 			{
-				dataModel=dao.getItems(dbManager, pageModel, pageIndex, null);
+				dataModel=dao.getItems(dbManager, pageModel, pageIndex, parent);
 				
 				itemPage=(DataItem[]) dataModel.getPage(pageIndex);
 			}
 		}
 		if(itemPage==null)
 		{
-			itemListAdapter=new ItemListAdapter(this, new DataItem[]{}, HEAD_OPERATION_FOR_VIEW_MODE_ALL_DATA, this);
+			itemListAdapter=new ItemListAdapter(this, new DataItem[]{}, headOperation, this);
 			lvDataList.setAdapter(itemListAdapter);
 			
 			refreshPageNumber(0, 0);
 			return false;
 		}else
 		{
-			itemListAdapter=new ItemListAdapter(this, itemPage, HEAD_OPERATION_FOR_VIEW_MODE_ALL_DATA, this);
+			itemListAdapter=new ItemListAdapter(this, itemPage, headOperation, this);
 			lvDataList.setAdapter(itemListAdapter);
 			
 			refreshPageNumber(pageNumber, dataModel.getTotalPageCount());

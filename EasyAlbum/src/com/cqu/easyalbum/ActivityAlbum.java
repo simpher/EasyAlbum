@@ -20,6 +20,7 @@ public class ActivityAlbum extends SimpleItemListView {
 		// TODO Auto-generated method stub
 		dao=new DaoAlbum();
 		parent=null;
+		headOperation="添加相册";
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public class ActivityAlbum extends SimpleItemListView {
 				// TODO Auto-generated method stub
 				
 			}
-		});
+		}, "相册名");
 		dialogAddAlbum.setTitle("添加相册");
 		dialogAddAlbum.show();
 	}

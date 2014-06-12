@@ -19,10 +19,13 @@ public class DialogAddSimpleItem extends Dialog{
 	private TextView tvCancel;
 	private TextView tvOk;
 	
-	public DialogAddSimpleItem(Context context, DialogListener listener) {
+	private String nameHint;
+	
+	public DialogAddSimpleItem(Context context, DialogListener listener, String nameHint) {
 		super(context);
 		// TODO Auto-generated constructor stub
 		this.listener=listener;
+		this.nameHint=nameHint;
 		
 		this.setCancelable(true);
 		this.setCanceledOnTouchOutside(true);
@@ -86,5 +89,7 @@ public class DialogAddSimpleItem extends Dialog{
 				}
 			}
 		});
+		
+		etName.setHint(nameHint);
 	}
 }

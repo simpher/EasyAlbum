@@ -17,6 +17,7 @@ public class ActivityImageItem extends SimpleItemListView{
 		// TODO Auto-generated method stub
 		dao=new DaoImageItem();
 		parent=(DataItem) getIntent().getSerializableExtra(ActivityAlbum.KEY_ALBUM);
+		headOperation="添加图片";
 	}
 
 	@Override
