@@ -51,6 +51,8 @@ public class ImageViewZoomable extends ImageView {
 	{
 		this.imageHeight=bmpHeight;
 		this.imageWidth=bmpWidth;
+		
+		this.toggler=new Toggler();
 	}
 
 	private float zoomDistance(MotionEvent event) {
@@ -168,40 +170,41 @@ public class ImageViewZoomable extends ImageView {
 	
 	private void scaleToOriginalSize()
 	{
-		int[] rect=null;
 		if(toggler.isOff()==true)
 		{
-			rect=drawableArea.centerNoLimit(imageWidth, imageHeight);
+			int left=(drawableArea.getWidth()-imageWidth)/2;
+			int top=(drawableArea.getHeight()-imageHeight)/2;
+			int right=left+imageWidth;
+			int bottom=top+imageHeight;
+			setFrame(left,top,right,bottom);
 		}else
 		{
-			rect=drawableArea.centerLimitInside(imageWidth, imageHeight);
+			int[] rect=drawableArea.centerLimitInside(imageWidth, imageHeight);
+			setFrame(rect[0],rect[1],rect[2],rect[3]);
 		}
-		setFrame(rect[0], rect[1], rect[2], rect[3]);
 		toggler.toggle();
-		
 	}
 
 	private void setPosition(int left, int top, int right, int bottom) {
+		int min_margin=120;
 		int width=right-left;
 		int height=bottom-top;
-		if(left>0)
+		if(left>=(drawableArea.getWidth()-min_margin))
 		{
-			left=0;
+			left=drawableArea.getWidth()-min_margin;
 			right=left+width;
-		}
-		if(right>drawableArea.getWidth())
+		}else if((right-min_margin)<=0)
 		{
-			right=drawableArea.getWidth();
+			right=min_margin;
 			left=right-width;
 		}
-		if(top>0)
+		if(top>=(drawableArea.getHeight()-min_margin))
 		{
-			top=0;
+			top=drawableArea.getHeight()-min_margin;
 			bottom=top+height;
-		}
-		if(bottom>drawableArea.getHeight())
+		}else if((bottom-min_margin)<=0)
 		{
-			bottom=drawableArea.getHeight();
+			bottom=min_margin;
 			top=bottom-height;
 		}
 		layout(left, top, right, bottom);

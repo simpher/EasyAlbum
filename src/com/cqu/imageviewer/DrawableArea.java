@@ -44,7 +44,7 @@ public class DrawableArea {
 		}
 		
 		double areaRatio=this.withHeightRatio();
-		double objectRatio=objectWidth/objectHeight;
+		double objectRatio=1.0*objectWidth/objectHeight;
 		if(objectRatio>areaRatio)
 		{
 			int scaledHeight=(int)(this.width/objectRatio);
