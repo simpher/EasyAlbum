@@ -1,12 +1,14 @@
 package com.cqu.customizedview;
 
-import com.cqu.util.ScreenUtil.Screen;
+import com.cqu.imageviewer.DrawableArea;
+import com.cqu.util.Toggler;
 
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 
 public class ImageViewZoomable extends ImageView {
@@ -23,10 +25,12 @@ public class ImageViewZoomable extends ImageView {
 	private float zoomScale = 0.04f;
 
 	private Point translateStartPoint=new Point();
-	private Screen screen = null;
+	private DrawableArea drawableArea = null;
 	private int imageWidth=0;
 	private int imageHeight=0;
 	private long firstClickTime=0;
+	
+	private Toggler toggler;
 
 	public ImageViewZoomable(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -43,10 +47,8 @@ public class ImageViewZoomable extends ImageView {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public ImageViewZoomable(Context context, Screen screen,int bmpWidth,int bmpHeight) {
-		super(context);
-		// TODO Auto-generated constructor stub
-		this.screen = screen;
+	public void init(int bmpWidth,int bmpHeight)
+	{
 		this.imageHeight=bmpHeight;
 		this.imageWidth=bmpWidth;
 	}
@@ -59,6 +61,11 @@ public class ImageViewZoomable extends ImageView {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+		if(drawableArea==null)
+		{
+			View parentView=(View) this.getParent();
+			drawableArea=new DrawableArea(parentView.getWidth(), parentView.getHeight());
+		}
 		switch (event.getAction() & MotionEvent.ACTION_MASK) {
 		case MotionEvent.ACTION_DOWN:
 		{
@@ -161,33 +168,40 @@ public class ImageViewZoomable extends ImageView {
 	
 	private void scaleToOriginalSize()
 	{
-		int left=(screen.widthPixels-imageWidth)/2;
-		int top=(screen.heightPixels-imageHeight)/2;
-		int right=left+imageWidth;
-		int bottom=top+imageHeight;
-		setFrame(left,top,right,bottom);
+		int[] rect=null;
+		if(toggler.isOff()==true)
+		{
+			rect=drawableArea.centerNoLimit(imageWidth, imageHeight);
+		}else
+		{
+			rect=drawableArea.centerLimitInside(imageWidth, imageHeight);
+		}
+		setFrame(rect[0], rect[1], rect[2], rect[3]);
+		toggler.toggle();
+		
 	}
 
 	private void setPosition(int left, int top, int right, int bottom) {
-		int minMargin=45;
 		int width=right-left;
 		int height=bottom-top;
-		if(left>=(screen.widthPixels-minMargin))
+		if(left>0)
 		{
-			left=screen.widthPixels-minMargin;
+			left=0;
 			right=left+width;
-		}else if((right-minMargin)<=0)
+		}
+		if(right>drawableArea.getWidth())
 		{
-			right=minMargin;
+			right=drawableArea.getWidth();
 			left=right-width;
 		}
-		if(top>=(screen.heightPixels-minMargin))
+		if(top>0)
 		{
-			top=screen.heightPixels-minMargin;
+			top=0;
 			bottom=top+height;
-		}else if((bottom-minMargin)<=0)
+		}
+		if(bottom>drawableArea.getHeight())
 		{
-			bottom=minMargin;
+			bottom=drawableArea.getHeight();
 			top=bottom-height;
 		}
 		layout(left, top, right, bottom);

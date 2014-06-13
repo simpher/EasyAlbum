@@ -36,6 +36,7 @@ public class FilePicker extends Activity{
 	
 	private FileFilter filter;
 	private boolean multiSelectable=false;
+	private boolean directoryOnly=false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,27 +47,12 @@ public class FilePicker extends Activity{
 		Intent intent=getIntent();
 		if(intent.getSerializableExtra(KEY_FILE_FILTER)!=null)
 		{
-			final String[] filterExts=intent.getStringArrayExtra(KEY_FILE_FILTER);
-			filter=new FileFilter() {
-				
-				@Override
-				public boolean accept(File pathname) {
-					// TODO Auto-generated method stub
-					if(pathname.isDirectory())
-					{
-						return true;
-					}
-					String name=pathname.getName();
-					for(String ext : filterExts)
-					{
-						if(name.endsWith(ext)==true)
-						{
-							return true;
-						}
-					}
-					return false;
-				}
-			};
+			String[] filterExts=intent.getStringArrayExtra(KEY_FILE_FILTER);
+			if(filterExts[0].equals(FileFilterUtil.DIRECTORY))
+			{
+				directoryOnly=true;
+			}
+			filter=FileFilterUtil.getFileFilter(filterExts);
 		}
 		multiSelectable=intent.getBooleanExtra(KEY_MULTISELECTABLE, false);
 		
@@ -108,12 +94,13 @@ public class FilePicker extends Activity{
 				// TODO Auto-generated method stub
 				Intent data=new Intent();
 				data.putExtra("path", curPath);
-				FileItem[] items=((FileListAdapter)filesListAdapter).selectedItems();
+				String[] items=((FileListAdapter)filesListAdapter).selectedItems();
 				if(items.length==0)
 				{
 					Toast.makeText(FilePicker.this, "nothing selected", Toast.LENGTH_SHORT).show();
 					return;
 				}
+				data.putExtra("selected", items);
 				setResult(Activity.RESULT_OK, data);
 				finish();
 			}
@@ -128,7 +115,7 @@ public class FilePicker extends Activity{
 				finish();
 			}
 		});
-		
+
 		lvFiles.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -159,7 +146,7 @@ public class FilePicker extends Activity{
 			items[i]=new FileItem(files[i].isDirectory()?FileItem.TYPE_DIRECTORY:FileItem.TYPE_FILE ,files[i].getName());
 		}
 		
-		filesListAdapter=new FileListAdapter(this, items, multiSelectable);
+		filesListAdapter=new FileListAdapter(this, items, multiSelectable, directoryOnly);
 		this.lvFiles.setAdapter(filesListAdapter);
 	}
 }

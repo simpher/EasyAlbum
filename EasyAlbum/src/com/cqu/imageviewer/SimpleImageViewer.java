@@ -1,8 +1,9 @@
-package com.cqu.easyalbum;
+package com.cqu.imageviewer;
 
 import com.cqu.bean.ImageItem;
 import com.cqu.customizedview.ImageViewZoomable;
-
+import com.cqu.easyalbum.ActivityImageItem;
+import com.cqu.easyalbum.R;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,7 +28,10 @@ public class SimpleImageViewer extends Activity{
 	
 	private void init()
 	{
+		ivImageViewer=(ImageViewZoomable) findViewById(R.id.ivImageViewer);
+		
 		image=BitmapFactory.decodeFile(imageItem.getPath());
 		ivImageViewer.setImageBitmap(image);
+		ivImageViewer.init(image.getWidth(), image.getHeight());
 	}
 }

@@ -250,7 +250,7 @@ public class DaoImageItem implements GeneralDaoInterface{
 			ContentValues cv=new ContentValues();
 			cv.put("albumid", imageItem.getAlbumId());
 			cv.put("path", imageItem.getPath());
-			db.insert("DataField", null, cv);
+			db.insert("ImageItem", null, cv);
 			return true;
 		}catch(SQLException e)
 		{

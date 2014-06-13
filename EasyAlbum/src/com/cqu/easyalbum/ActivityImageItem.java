@@ -9,8 +9,9 @@ import android.content.DialogInterface.OnClickListener;
 import com.cqu.bean.DataItem;
 import com.cqu.bean.ImageItem;
 import com.cqu.dao.DaoImageItem;
-import com.cqu.filepicker.FileItem;
+import com.cqu.filepicker.FileFilterUtil;
 import com.cqu.filepicker.FilePicker;
+import com.cqu.imageviewer.SimpleImageViewer;
 
 public class ActivityImageItem extends SimpleItemListView{
 	
@@ -30,7 +31,7 @@ public class ActivityImageItem extends SimpleItemListView{
 		// TODO Auto-generated method stub
 		Intent intent=new Intent();
 		intent.setClass(this, FilePicker.class);
-		intent.putExtra(FilePicker.KEY_FILE_FILTER, new String[]{".jpg", ".png", ".gif"});
+		intent.putExtra(FilePicker.KEY_FILE_FILTER, FileFilterUtil.IMAGE_GENERAL);
 		intent.putExtra(FilePicker.KEY_MULTISELECTABLE, false);
 		startActivityForResult(intent, REQUEST_CODE_ADD_IMAGEITEM);
 	}
@@ -43,9 +44,9 @@ public class ActivityImageItem extends SimpleItemListView{
 			if(resultCode==Activity.RESULT_OK)
 			{
 				String path=data.getStringExtra("path");
-				FileItem[] itemsSelected=(FileItem[]) data.getSerializableExtra("selected");
-				FileItem item=itemsSelected[0];
-				if(dao.addItem(dbManager, new ImageItem(-1, item.getName(), parent.getId(), path+"/"+item.getName()))==true)
+				String[] itemsSelected=(String[]) data.getStringArrayExtra("selected");
+				String item=itemsSelected[0];
+				if(dao.addItem(dbManager, new ImageItem(-1, item, parent.getId(), path+"/"+item))==true)
 				{
 					itemAddedReset();
 				}

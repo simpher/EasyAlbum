@@ -189,14 +189,20 @@ public abstract class SimpleItemListView extends ItemListPageView{
 	
 	protected void itemAddedReset()
 	{
-		int spaceCount=dataModel.getSpaceCount();
-		dataModel=null;//由于新加了一项，需要重新从数据库取数据
-		if(spaceCount%pageModel.countPerPage==0)//表明新添加的一项新开了一页
+		if(dataModel==null)
 		{
-			loadNewPage(getCurPageNumber()+1);
+			loadNewPage(1);
 		}else
 		{
-			loadNewPage(getCurPageNumber());
+			int spaceCount=dataModel.getSpaceCount();
+			dataModel=null;//由于新加了一项，需要重新从数据库取数据
+			if(spaceCount%pageModel.countPerPage==0)//表明新添加的一项新开了一页
+			{
+				loadNewPage(getCurPageNumber()+1);
+			}else
+			{
+				loadNewPage(getCurPageNumber());
+			}
 		}
 	}
 }

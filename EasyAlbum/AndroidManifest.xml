@@ -37,7 +37,7 @@
         <activity android:name="com.cqu.filepicker.FilePicker"
             android:label="@string/labe_add_image" />
         
-        <activity android:name="com.cqu.easyalbum.SimpleImageViewer"
+        <activity android:name="com.cqu.imageviewer.SimpleImageViewer"
             android:label="@string/labe_view_image" />
     </application>
 
