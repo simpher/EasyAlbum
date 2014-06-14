@@ -24,9 +24,11 @@
 
             <TextView
                 android:id="@+id/tvMoreOperationsA"
-                android:layout_width="30dp"
+                android:layout_width="40dp"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
+                android:paddingLeft="@dimen/default_gap"
+                android:paddingRight="@dimen/default_gap"
                 android:gravity="center"
                 android:text="@string/more_operations"
                 android:background="@drawable/textview_button_selector" />
@@ -48,9 +50,11 @@
 
             <TextView
                 android:id="@+id/tvMoreOperationsB"
-                android:layout_width="30dp"
+                android:layout_width="40dp"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
+                android:paddingLeft="@dimen/default_gap"
+                android:paddingRight="@dimen/default_gap"
                 android:gravity="center"
                 android:text="@string/more_operations"
                 android:background="@drawable/textview_button_selector" />
