@@ -205,8 +205,19 @@ public class DaoAlbum implements GeneralDaoInterface{
 			return null;
 		}
 	}
+	
+	public int existsByName(DBManager dbManager, DataItem item)
+	{
+		return this.existsByName(dbManager.getDB(), item);
+	}
 
-	private boolean existsByName(SQLiteDatabase db, DataItem item, DataItem parent) {
+	/**
+	 * 
+	 * @param db
+	 * @param item
+	 * @return -1 or id of item
+	 */
+	private int existsByName(SQLiteDatabase db, DataItem item) {
 		Cursor c=null;
 		try{
 			String sql="select id from Album where name='"+item.getName()+"'";
@@ -214,7 +225,7 @@ public class DaoAlbum implements GeneralDaoInterface{
 			if(c!=null&&c.getCount()>0)
 			{
 				c.move(1);
-				return true;
+				return c.getInt(0);
 			}
 		}catch(SQLException e)
 		{
@@ -227,14 +238,14 @@ public class DaoAlbum implements GeneralDaoInterface{
 				c=null;
 			}
 		}
-		return false;
+		return -1;
 	}
 
 
 	@Override
 	public int addItem(DBManager dbManager, DataItem itemToAdd) {
 		// TODO Auto-generated method stub
-		if(this.existsByName(dbManager.getDB(), itemToAdd, null)==true)
+		if(this.existsByName(dbManager.getDB(), itemToAdd)!=-1)
 		{
 			return 0;
 		}
@@ -260,7 +271,7 @@ public class DaoAlbum implements GeneralDaoInterface{
 	public int updateItem(DBManager dbManager, DataItem itemNew) {
 		// TODO Auto-generated method stub
 		try{
-			if(this.existsByName(dbManager.getDB(), itemNew, null)==true)
+			if(this.existsByName(dbManager.getDB(), itemNew)!=-1)
 			{
 				return 0;
 			}

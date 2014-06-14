@@ -2,17 +2,24 @@ package com.cqu.easyalbum;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.widget.BaseAdapter;
 import android.widget.Toast;
 
 import com.cqu.bean.DataItem;
 import com.cqu.bean.ImageItem;
+import com.cqu.dao.DaoAlbum;
 import com.cqu.dao.DaoImageItem;
+import com.cqu.dialog.DialogAddSimpleItem;
+import com.cqu.dialog.DialogListener;
 import com.cqu.filepicker.FileFilterUtil;
 import com.cqu.filepicker.FilePicker;
 import com.cqu.imageviewer.SimpleImageViewer;
+import com.cqu.listadapter.ItemListAdapterForImageItem;
+import com.cqu.listadapter.OperationListener;
 
 public class ActivityImageItem extends SimpleItemListView{
 	
@@ -95,7 +102,49 @@ public class ActivityImageItem extends SimpleItemListView{
 	}
 
 	@Override
-	public void onEditItem(DataItem item) {
+	public void onEditItem(final DataItem item) {
 		// TODO Auto-generated method stub
+            DialogAddSimpleItem dialogAddAlbum=new DialogAddSimpleItem(this, new DialogListener() {
+			
+			@Override
+			public boolean onOk(Intent data) {
+				// TODO Auto-generated method stub
+				String name=data.getStringExtra("name").trim();
+				DaoAlbum dao=new DaoAlbum();
+				int albumId=dao.existsByName(dbManager, new DataItem(-1, name));
+				if(albumId==-1)
+				{
+					Toast.makeText(ActivityImageItem.this, "相册["+name+"]不存在", Toast.LENGTH_SHORT).show();
+					return false;
+				}
+				DaoImageItem daoImageItem=new DaoImageItem();
+				ImageItem imageItem=(ImageItem) item;
+				int successCount=daoImageItem.addItem(dbManager, new ImageItem(imageItem.getId(), imageItem.getName(), albumId, imageItem.getDir()));
+				if(successCount>=0)
+				{
+					Toast.makeText(ActivityImageItem.this, "添加至相册["+successCount+"/1]", Toast.LENGTH_SHORT).show();
+					return true;
+				}else
+				{
+					Toast.makeText(ActivityImageItem.this, "添加失败", Toast.LENGTH_SHORT).show();
+					return true;
+				}
+			}
+			
+			@Override
+			public void onCancel() {
+				// TODO Auto-generated method stub
+				
+			}
+		}, "相册名");
+		dialogAddAlbum.setTitle("添加至相册");
+		dialogAddAlbum.show();
+	}
+
+	@Override
+	protected BaseAdapter getListAdapter(Context context, DataItem[] dataItems,
+			String headOperation, OperationListener opListener) {
+		// TODO Auto-generated method stub
+		return new ItemListAdapterForImageItem(context, dataItems, headOperation, opListener);
 	}
 }

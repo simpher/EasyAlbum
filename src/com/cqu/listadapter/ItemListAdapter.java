@@ -21,12 +21,16 @@ public class ItemListAdapter extends BaseAdapter{
 	private DataItem[] dataItems;
 	private String headOperation="";
 	
+	protected int adapterLayouId;
+	
 	public ItemListAdapter(Context context, DataItem[] dataItems, String headOperation, OperationListener opListener) {
 		// TODO Auto-generated constructor stub
 		mInflater = LayoutInflater.from(context);
 		this.dataItems=dataItems;
 		this.headOperation=headOperation;
 		this.opListener=opListener;
+		
+		this.adapterLayouId=R.layout.layout_listadapter_item;
 	}
 	
 	@Override
@@ -59,7 +63,7 @@ public class ItemListAdapter extends BaseAdapter{
 		ViewHolder holder;
 
 		if (convertView == null) {
-			convertView = mInflater.inflate(R.layout.layout_listadapter_item, null);
+			convertView = mInflater.inflate(adapterLayouId, null);
 			
 			holder = new ViewHolder();
 			holder.tvItemName = (TextView) convertView.findViewById(R.id.tvItemName);

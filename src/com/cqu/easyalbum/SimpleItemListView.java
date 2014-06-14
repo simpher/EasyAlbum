@@ -1,18 +1,22 @@
 package com.cqu.easyalbum;
 
+import android.content.Context;
+import android.widget.BaseAdapter;
+import android.widget.ListAdapter;
 import android.widget.Toast;
 
 import com.cqu.bean.DataItem;
 import com.cqu.dao.GeneralDaoInterface;
 import com.cqu.db.DBManager;
 import com.cqu.db.DataModel;
-import com.cqu.listadapter.ItemListAdapter;
+import com.cqu.listadapter.OperationListener;
 
 public abstract class SimpleItemListView extends ItemListPageView{
 	
 	private final int VIEW_MODE_ALL_DATA=0;
 	private final int VIEW_MODE_SEARCH_DATA=1;
 	
+	protected ListAdapter itemListAdapter;
 	protected String headOperation="";
 	private final String HEAD_OPERATION_FOR_VIEW_MODE_SEARCH_DATA="退出搜索视图";
 	
@@ -72,6 +76,8 @@ public abstract class SimpleItemListView extends ItemListPageView{
 		}
 	}
 	
+	protected abstract BaseAdapter getListAdapter(Context context, DataItem[] dataItems, String headOperation, OperationListener opListener);
+	
 	private boolean loadAllDataPage(int pageNumber)
 	{
 		int pageIndex=pageNumber-1;
@@ -96,14 +102,14 @@ public abstract class SimpleItemListView extends ItemListPageView{
 		}
 		if(itemPage==null)
 		{
-			itemListAdapter=new ItemListAdapter(this, new DataItem[]{}, headOperation, this);
+			itemListAdapter=this.getListAdapter(this, new DataItem[]{}, headOperation, this);
 			lvDataList.setAdapter(itemListAdapter);
 			
 			refreshPageNumber(0, 0);
 			return false;
 		}else
 		{
-			itemListAdapter=new ItemListAdapter(this, itemPage, headOperation, this);
+			itemListAdapter=this.getListAdapter(this, itemPage, headOperation, this);
 			lvDataList.setAdapter(itemListAdapter);
 			
 			refreshPageNumber(pageNumber, dataModel.getTotalPageCount());
@@ -135,14 +141,14 @@ public abstract class SimpleItemListView extends ItemListPageView{
 		}
 		if(itemPage==null)
 		{
-			itemListAdapter=new ItemListAdapter(this, new DataItem[]{}, HEAD_OPERATION_FOR_VIEW_MODE_SEARCH_DATA, this);
+			itemListAdapter=this.getListAdapter(this, new DataItem[]{}, HEAD_OPERATION_FOR_VIEW_MODE_SEARCH_DATA, this);
 			lvDataList.setAdapter(itemListAdapter);
 			
 			refreshPageNumber(0, 0);
 			return false;
 		}else
 		{
-			itemListAdapter=new ItemListAdapter(this, itemPage, HEAD_OPERATION_FOR_VIEW_MODE_SEARCH_DATA, this);
+			itemListAdapter=this.getListAdapter(this, itemPage, HEAD_OPERATION_FOR_VIEW_MODE_SEARCH_DATA, this);
 			lvDataList.setAdapter(itemListAdapter);
 			
 			refreshPageNumber(pageNumber, dataModel.getTotalPageCount());

@@ -7,7 +7,6 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -36,8 +35,6 @@ public abstract class ItemListPageView extends Activity implements OperationList
 	protected ViewNumberUpdown viewNumberUpdown;
 	
 	protected EditText etSearchString;
-	
-	protected ListAdapter itemListAdapter;
 	
 	private int curPageNumber=0;
 	private int totalPage=0;

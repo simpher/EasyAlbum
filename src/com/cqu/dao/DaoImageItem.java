@@ -206,7 +206,7 @@ public class DaoImageItem implements GeneralDaoInterface{
 		}
 	}
 	
-	public boolean existsByName(SQLiteDatabase db, ImageItem imageItem, DataItem parent) {
+	public int existsByName(SQLiteDatabase db, ImageItem imageItem, DataItem parent) {
 		Cursor c=null;
 		try{
 			String sql="select id from ImageItem where albumid="+parent.getId()+" and dir='"+imageItem.getDir()+"' and name='"+imageItem.getName()+"'";
@@ -214,7 +214,7 @@ public class DaoImageItem implements GeneralDaoInterface{
 			if(c!=null&&c.getCount()>0)
 			{
 				c.move(1);
-				return true;
+				return c.getInt(0);
 			}
 		}catch(SQLException e)
 		{
@@ -228,7 +228,7 @@ public class DaoImageItem implements GeneralDaoInterface{
 			}
 		}
 		
-		return false;
+		return -1;
 	}
 
 	@Override
@@ -236,7 +236,7 @@ public class DaoImageItem implements GeneralDaoInterface{
 		// TODO Auto-generated method stub
 		ImageItem imageItem=(ImageItem) itemToAdd;
 		SQLiteDatabase db=dbManager.getDB();
-		if(this.existsByName(db, imageItem, new DataItem(imageItem.getAlbumId(), ""))==true)
+		if(this.existsByName(db, imageItem, new DataItem(imageItem.getAlbumId(), ""))!=-1)
 		{
 			return 0;
 		}
@@ -265,7 +265,7 @@ public class DaoImageItem implements GeneralDaoInterface{
 			for(DataItem item : itemsToAdd)
 			{
 				imageItem=(ImageItem) item;
-				if(this.existsByName(db, imageItem, new DataItem(imageItem.getAlbumId(), ""))==false)
+				if(this.existsByName(db, imageItem, new DataItem(imageItem.getAlbumId(), ""))==-1)
 				{
 					ContentValues cv=new ContentValues();
 					cv.put("albumid", imageItem.getAlbumId());
@@ -294,7 +294,7 @@ public class DaoImageItem implements GeneralDaoInterface{
 		SQLiteDatabase db=dbManager.getDB();
 		ImageItem imageItem=(ImageItem) itemNew;
 		try{
-			if(this.existsByName(db, imageItem, new DataItem(imageItem.getAlbumId(), ""))==true)
+			if(this.existsByName(db, imageItem, new DataItem(imageItem.getAlbumId(), ""))!=-1)
 			{
 				return 0;
 			}

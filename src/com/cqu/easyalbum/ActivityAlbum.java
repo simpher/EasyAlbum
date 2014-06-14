@@ -1,6 +1,7 @@
 package com.cqu.easyalbum;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -11,6 +12,8 @@ import com.cqu.bean.DataItem;
 import com.cqu.dao.DaoAlbum;
 import com.cqu.dialog.DialogAddSimpleItem;
 import com.cqu.dialog.DialogListener;
+import com.cqu.listadapter.ItemListAdapter;
+import com.cqu.listadapter.OperationListener;
 
 public class ActivityAlbum extends SimpleItemListView {
 
@@ -135,5 +138,12 @@ public class ActivityAlbum extends SimpleItemListView {
 		}, "相册名");
 		dialogAddAlbum.setTitle("修改相册名");
 		dialogAddAlbum.show();
+	}
+
+	@Override
+	protected BaseAdapter getListAdapter(Context context, DataItem[] dataItems,
+			String headOperation, OperationListener opListener) {
+		// TODO Auto-generated method stub
+		return new ItemListAdapter(context, dataItems, headOperation, opListener);
 	}
 }

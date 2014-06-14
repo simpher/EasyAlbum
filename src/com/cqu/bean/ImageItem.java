@@ -17,11 +17,11 @@ public class ImageItem extends DataItem{
 		this.dir=path;
 	}
 	
-	public ImageItem(int id, String name, int albumId, String path) {
+	public ImageItem(int id, String name, int albumId, String dir) {
 		super(id, name);
 		// TODO Auto-generated constructor stub
 		this.albumId=albumId;
-		this.dir=path;
+		this.dir=dir;
 	}
 	
 	public int getAlbumId()
