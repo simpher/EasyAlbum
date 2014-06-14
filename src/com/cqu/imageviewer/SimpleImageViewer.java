@@ -91,15 +91,27 @@ public class SimpleImageViewer extends Activity{
         loadItem(curItemNumber);
 	}
 	
+	/**
+	 * 如果需要显示的item超过本地页缓存itemPage范围（一页一般缓存10个item），
+	 * 则向本地批次缓存dataModel（一个批次一般缓存5页）取下一页的新数据；
+	 * 如果超过了本地批次缓存范围，则dataModel会自动从数据库中取下一个批次的新数据
+	 * @param itemNumber
+	 */
 	private void loadItem(int itemNumber)
 	{
 		ImageItem imageItem=null;
+		int curPageNumber=(itemNumber-1)/this.pageModel.countPerPage+1;
 		if(itemPage==null)
 		{
-			itemPage=loadAllDataPage((itemNumber-1)/this.pageModel.countPerPage+1);
+			itemPage=loadAllDataPage(curPageNumber);
 		}
 		if(itemPage!=null)
 		{
+			if((itemNumber-1)%this.pageModel.countPerPage==0||
+					itemNumber%this.pageModel.countPerPage==0)
+			{
+				itemPage=loadAllDataPage(curPageNumber);
+			}
 			imageItem=(ImageItem) itemPage[(itemNumber-1)%this.pageModel.countPerPage];
 		}
 		if(imageItem!=null)
