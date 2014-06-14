@@ -97,9 +97,5 @@ public class ActivityImageItem extends SimpleItemListView{
 	@Override
 	public void onEditItem(DataItem item) {
 		// TODO Auto-generated method stub
-		Intent intent=new Intent();
-		intent.setClass(this, ActivityEditImageItem.class);
-		intent.putExtra(ActivityImageItem.KEY_IMAGEITEM, item);
-		startActivity(intent);
 	}
 }

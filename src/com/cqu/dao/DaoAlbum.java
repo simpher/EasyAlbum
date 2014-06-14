@@ -209,7 +209,7 @@ public class DaoAlbum implements GeneralDaoInterface{
 	private boolean existsByName(SQLiteDatabase db, DataItem item, DataItem parent) {
 		Cursor c=null;
 		try{
-			String sql="select id from Album where name='"+item+"'";
+			String sql="select id from Album where name='"+item.getName()+"'";
 			c=db.rawQuery(sql, null);
 			if(c!=null&&c.getCount()>0)
 			{
@@ -257,16 +257,20 @@ public class DaoAlbum implements GeneralDaoInterface{
 
 
 	@Override
-	public boolean updateItem(DBManager dbManager, DataItem itemNew) {
+	public int updateItem(DBManager dbManager, DataItem itemNew) {
 		// TODO Auto-generated method stub
 		try{
+			if(this.existsByName(dbManager.getDB(), itemNew, null)==true)
+			{
+				return 0;
+			}
 			ContentValues cv=new ContentValues();
 			cv.put("name", itemNew.getName());
 			dbManager.getDB().update("Album", cv, "id=?", new String[]{itemNew.getId()+""});
-			return true;
+			return 1;
 		}catch(SQLException e)
 		{
-			return false;
+			return -1;
 		}
 	}
 

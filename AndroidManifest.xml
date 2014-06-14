@@ -28,12 +28,6 @@
         <activity android:name="com.cqu.easyalbum.ActivityImageItem"
             android:label="@string/labe_image_list" />
         
-        <activity android:name="com.cqu.easyalbum.ActivityEditAlbum"
-            android:label="@string/labe_edit_album" />
-        
-        <activity android:name="com.cqu.easyalbum.ActivityEditImageItem"
-            android:label="@string/labe_edit_imageitem" />
-        
         <activity android:name="com.cqu.filepicker.FilePicker"
             android:label="@string/labe_add_image" />
         

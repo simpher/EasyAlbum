@@ -289,19 +289,23 @@ public class DaoImageItem implements GeneralDaoInterface{
 	}
 
 	@Override
-	public boolean updateItem(DBManager dbManager, DataItem itemNew) {
+	public int updateItem(DBManager dbManager, DataItem itemNew) {
 		// TODO Auto-generated method stub
 		SQLiteDatabase db=dbManager.getDB();
 		ImageItem imageItem=(ImageItem) itemNew;
 		try{
+			if(this.existsByName(db, imageItem, new DataItem(imageItem.getAlbumId(), ""))==true)
+			{
+				return 0;
+			}
 			ContentValues cv=new ContentValues();
 			cv.put("name", imageItem.getName());
 			db.update("ImageItem", cv, "id=?", new String[]{imageItem.getId()+""});
-			return true;
+			return 1;
 		}catch(SQLException e)
 		{
 			e.printStackTrace();
-			return false;
+			return -1;
 		}
 	}
 

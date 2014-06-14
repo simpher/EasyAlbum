@@ -1,5 +1,6 @@
 package com.cqu.imageviewer;
 
+import java.io.File;
 import com.cqu.bean.DataItem;
 import com.cqu.bean.ImageItem;
 import com.cqu.customizedview.ImageViewZoomable;
@@ -18,6 +19,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SimpleImageViewer extends Activity{
 	
@@ -102,13 +104,19 @@ public class SimpleImageViewer extends Activity{
 		}
 		if(imageItem!=null)
 		{
-			BitmapUtil.recycleBmp(image);//回收部分内存
-			
-			image=BitmapFactory.decodeFile(imageItem.getDir()+"/"+imageItem.getName());
-			ivImageViewer.setImageBitmap(image);
-			ivImageViewer.init(image.getWidth(), image.getHeight());
-			
-			refreshItemNumber(itemNumber, this.totalItem);
+			if(new File(imageItem.getDir()+"/"+imageItem.getName()).exists()==false)
+			{
+				Toast.makeText(this, "图片["+imageItem.getName()+"]不存在, 可能已经被删除或重命名", Toast.LENGTH_SHORT).show();
+			}else
+			{
+				BitmapUtil.recycleBmp(image);//回收部分内存
+				
+				image=BitmapFactory.decodeFile(imageItem.getDir()+"/"+imageItem.getName());
+				ivImageViewer.setImageBitmap(image);
+				ivImageViewer.init(image.getWidth(), image.getHeight());
+				
+				refreshItemNumber(itemNumber, this.totalItem);
+			}
 		}
 	}
 	

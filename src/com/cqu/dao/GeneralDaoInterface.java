@@ -15,6 +15,7 @@ public interface GeneralDaoInterface {
 	 * @return -1表示失败，其它表示添加成功的数量
 	 */
 	int addItem(DBManager dbManager, DataItem itemToAdd);
+	
 	/**
 	 * 
 	 * @param dbManager
@@ -22,7 +23,15 @@ public interface GeneralDaoInterface {
 	 * @return -1表示失败，其它表示添加成功的数量
 	 */
 	int addItems(DBManager dbManager, DataItem[] itemsToAdd);
-	boolean updateItem(DBManager dbManager, DataItem itemNew);
+	
+	/**
+	 * -1表示失败，其它表示更新成功的数量
+	 * @param dbManager
+	 * @param itemNew
+	 * @return
+	 */
+	int updateItem(DBManager dbManager, DataItem itemNew);
+	
 	boolean deleteItem(DBManager dbManager, DataItem item, boolean isParentEmpty);
 	boolean deleteItems(DBManager dbManager, DataItem[] items);
 }

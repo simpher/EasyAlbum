@@ -33,4 +33,9 @@ public class ImageItem extends DataItem{
 	{
 		return this.dir;
 	}
+	
+	public void setName(String name)
+	{
+		this.name=name;
+	}
 }

@@ -4,8 +4,6 @@
     <string name="app_name">EasyAlbum</string>
     <string name="labe_my_album">我的相册</string>
     <string name="labe_image_list">图片列表</string>
-    <string name="labe_edit_album">编辑相册</string>
-    <string name="labe_edit_imageitem">编辑图片</string>
     <string name="labe_add_image">添加图片</string>
     <string name="labe_view_image">查看图片</string>
     

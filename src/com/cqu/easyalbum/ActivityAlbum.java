@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.widget.BaseAdapter;
 import android.widget.Toast;
 
 import com.cqu.bean.DataItem;
@@ -31,7 +32,7 @@ public class ActivityAlbum extends SimpleItemListView {
 			@Override
 			public boolean onOk(Intent data) {
 				// TODO Auto-generated method stub
-				String name=data.getStringExtra("name");
+				String name=data.getStringExtra("name").trim();
 				DaoAlbum dao=new DaoAlbum();
 				int successCount=dao.addItem(dbManager, new DataItem(-1, name));
 				if(successCount==0)
@@ -95,11 +96,44 @@ public class ActivityAlbum extends SimpleItemListView {
 	}
 
 	@Override
-	public void onEditItem(DataItem item) {
+	public void onEditItem(final DataItem item) {
 		// TODO Auto-generated method stub
-		Intent intent=new Intent();
-		intent.setClass(this, ActivityEditAlbum.class);
-		intent.putExtra(ActivityAlbum.KEY_ALBUM, item);
-		startActivity(intent);
+            DialogAddSimpleItem dialogAddAlbum=new DialogAddSimpleItem(this, new DialogListener() {
+			
+			@Override
+			public boolean onOk(Intent data) {
+				// TODO Auto-generated method stub
+				String name=data.getStringExtra("name").trim();
+				if(name.equals(item.getName()))
+				{
+					return true;
+				}
+				DaoAlbum dao=new DaoAlbum();
+				int successCount=dao.updateItem(dbManager, new DataItem(item.getId(), name));
+				if(successCount==1)
+				{
+					item.setName(name);//更新本地存储(缓存)
+					((BaseAdapter)itemListAdapter).notifyDataSetChanged();//更新显示
+					Toast.makeText(ActivityAlbum.this, "更新成功", Toast.LENGTH_SHORT).show();
+					return true;
+				}else if(successCount==0)
+				{
+					Toast.makeText(ActivityAlbum.this, "相册["+name+"]已存在", Toast.LENGTH_SHORT).show();
+					return false;
+				}else
+				{
+					Toast.makeText(ActivityAlbum.this, "更新失败", Toast.LENGTH_SHORT).show();
+					return true;
+				}
+			}
+			
+			@Override
+			public void onCancel() {
+				// TODO Auto-generated method stub
+				
+			}
+		}, "相册名");
+		dialogAddAlbum.setTitle("修改相册名");
+		dialogAddAlbum.show();
 	}
 }
