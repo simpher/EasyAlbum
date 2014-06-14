@@ -1,10 +1,16 @@
 package com.cqu.easyalbum;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
 
@@ -18,6 +24,9 @@ import com.cqu.listadapter.OperationListener;
 public class ActivityAlbum extends SimpleItemListView {
 
 	public final static String KEY_ALBUM="KEY_ALBUM";
+	
+	private static final int HANDLER_WHAT_DELETE_ALBUM=1001;
+	private Dialog dialgTaskRunning;
 	
 	@Override
 	protected void initData() {
@@ -89,15 +98,68 @@ public class ActivityAlbum extends SimpleItemListView {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
-				if(dao.deleteItem(dbManager, new DataItem(item.getId(),""), imageCount>0)==true)
-				{
-					itemDeletedReset();
-				}
+				dialgTaskRunning=new ProgressDialog(ActivityAlbum.this);
+				dialgTaskRunning.setTitle("删除相册中...");
+				dialgTaskRunning.setCancelable(false);
+				dialgTaskRunning.setCanceledOnTouchOutside(false);
+				dialgTaskRunning.show();
+				
+				startDeleteTask(item, imageCount>0);
 			}
 		});
 		builder.setNegativeButton("取消", null);
 		builder.show();
 	}
+	
+	private void startDeleteTask(final DataItem item, final boolean isParentEmpty)
+	{
+		GeneralTaskThread task=new GeneralTaskThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				boolean ret=dao.deleteItem(dbManager, new DataItem(item.getId(),""), isParentEmpty);
+				
+				Message msg=new Message();
+				msg.what=HANDLER_WHAT_DELETE_ALBUM;
+				Bundle data=new Bundle();
+				data.putBoolean("success", ret);
+				data.putSerializable("item", item);
+				msg.setData(data);
+				
+				handlerAlbumTask.sendMessage(msg);
+			}
+		});
+		task.start();
+	}
+	
+	@SuppressLint("HandlerLeak")
+	private Handler handlerAlbumTask=new Handler()
+	{
+		public void handleMessage(android.os.Message msg) 
+		{
+			if(msg.what==HANDLER_WHAT_DELETE_ALBUM)
+			{
+				Bundle data=msg.getData();
+				boolean success=data.getBoolean("success");
+				DataItem item=(DataItem) data.getSerializable("item");
+				if(success==true)
+				{
+					Toast.makeText(ActivityAlbum.this, "删除相册["+item.getName()+"]成功", Toast.LENGTH_SHORT).show();
+					
+					itemDeletedReset();
+				}else
+				{
+					Toast.makeText(ActivityAlbum.this, "删除相册["+item.getName()+"]出错", Toast.LENGTH_LONG).show();
+				}
+				if(dialgTaskRunning!=null)
+				{
+					dialgTaskRunning.dismiss();
+					dialgTaskRunning=null;
+				}
+			}
+		};
+	};
 
 	@Override
 	public void onEditItem(final DataItem item) {

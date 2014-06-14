@@ -28,13 +28,13 @@ import com.cqu.filepicker.FilePicker;
 import com.cqu.imageviewer.SimpleImageViewer;
 import com.cqu.listadapter.ItemListAdapterForImageItem;
 import com.cqu.listadapter.OperationListener;
-import com.cqu.util.HandlerUtil;
 
 public class ActivityImageItem extends SimpleItemListView{
 	
 	public static final String KEY_IMAGEITEM="KEY_IMAGEITEM";
 	public static final int REQUEST_CODE_ADD_IMAGEITEM=101;
 	
+	private static final int HANDLER_WHAT_ADD_IMAGE_ITEMS=1001;
 	private Dialog dialgTaskRunning;
 	
 	@Override
@@ -131,12 +131,13 @@ public class ActivityImageItem extends SimpleItemListView{
 						int successCount=dao.addItems(dbManager, itemsToAdd);
 						
 						Message msg=new Message();
+						msg.what=HANDLER_WHAT_ADD_IMAGE_ITEMS;
 						Bundle data=new Bundle();
 						data.putInt("successCount", successCount);
 						data.putInt("totalCount", itemsToAdd.length);
 						msg.setData(data);
 						
-						handlerTaskAddImageItems.sendMessage(msg);
+						handlerImageItemTask.sendMessage(msg);
 					}
 				});
 				task.start();
@@ -146,23 +147,27 @@ public class ActivityImageItem extends SimpleItemListView{
 	}
 	
 	@SuppressLint("HandlerLeak")
-	private Handler handlerTaskAddImageItems=new Handler()
+	private Handler handlerImageItemTask=new Handler()
 	{
 		public void handleMessage(android.os.Message msg) 
 		{
-			if(msg.what==HandlerUtil.TYPE_MESSAGE_SUCCEED)
+			if(msg.what==HANDLER_WHAT_ADD_IMAGE_ITEMS)
 			{
 				Bundle data=msg.getData();
 				int successCount=data.getInt("successCount");
 				int totalCount=data.getInt("totalCount");
-				Toast.makeText(ActivityImageItem.this, "新添加图片["+successCount+"/"+totalCount+"]", Toast.LENGTH_SHORT).show();
 				if(successCount>0)
 				{
+					Toast.makeText(ActivityImageItem.this, "新添加图片["+successCount+"/"+totalCount+"]", Toast.LENGTH_SHORT).show();
 					itemAddedReset();
+				}else
+				{
+					Toast.makeText(ActivityImageItem.this, "添加出错", Toast.LENGTH_SHORT).show();
 				}
 				if(dialgTaskRunning!=null)
 				{
 					dialgTaskRunning.dismiss();
+					dialgTaskRunning=null;
 				}
 			}
 		};
