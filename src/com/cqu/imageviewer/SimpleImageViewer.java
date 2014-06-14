@@ -14,7 +14,6 @@ import com.cqu.util.BitmapUtil;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -123,11 +122,17 @@ public class SimpleImageViewer extends Activity{
 			{
 				BitmapUtil.recycleBmp(image);//回收部分内存
 				
-				image=BitmapFactory.decodeFile(imageItem.getDir()+"/"+imageItem.getName());
-				ivImageViewer.setImageBitmap(image);
-				ivImageViewer.init(image.getWidth(), image.getHeight());
-				
-				refreshItemNumber(itemNumber, this.totalItem);
+				image=BitmapUtil.loadImageBitmap(imageItem, 8);
+				if(image!=null)
+				{
+					ivImageViewer.setImageBitmap(image);
+					ivImageViewer.init(image.getWidth(), image.getHeight());
+					
+					refreshItemNumber(itemNumber, this.totalItem);
+				}else
+				{
+					Toast.makeText(this, "图片过大，系统内存不足", Toast.LENGTH_SHORT).show();
+				}
 			}
 		}
 	}
