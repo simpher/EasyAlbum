@@ -206,11 +206,7 @@ public class DaoAlbum implements GeneralDaoInterface{
 		}
 	}
 
-
-	@Override
-	public int exists(DBManager dbManager, DataItem item, DataItem parent) {
-		// TODO Auto-generated method stub
-		SQLiteDatabase db=dbManager.getDB();
+	private boolean existsByName(SQLiteDatabase db, DataItem item, DataItem parent) {
 		Cursor c=null;
 		try{
 			String sql="select id from Album where name='"+item+"'";
@@ -218,7 +214,7 @@ public class DaoAlbum implements GeneralDaoInterface{
 			if(c!=null&&c.getCount()>0)
 			{
 				c.move(1);
-				return c.getInt(0);
+				return true;
 			}
 		}catch(SQLException e)
 		{
@@ -231,29 +227,32 @@ public class DaoAlbum implements GeneralDaoInterface{
 				c=null;
 			}
 		}
-		
-		return -1;
+		return false;
 	}
 
 
 	@Override
-	public boolean addItem(DBManager dbManager, DataItem itemToAdd) {
+	public int addItem(DBManager dbManager, DataItem itemToAdd) {
 		// TODO Auto-generated method stub
+		if(this.existsByName(dbManager.getDB(), itemToAdd, null)==true)
+		{
+			return 0;
+		}
 		try{
 			ContentValues cv=new ContentValues();
 			cv.put("name", itemToAdd.getName());
 			dbManager.getDB().insert("Album", null, cv);
-			return true;
+			return 1;
 		}catch(SQLException e)
 		{
-			return false;
+			return -1;
 		}
 	}
 	
 	@Override
-	public boolean addItems(DBManager dbManager, DataItem[] itemsToAdd) {
+	public int addItems(DBManager dbManager, DataItem[] itemsToAdd) {
 		// TODO Auto-generated method stub
-		return false;
+		return -1;
 	}
 
 
@@ -273,12 +272,12 @@ public class DaoAlbum implements GeneralDaoInterface{
 
 
 	@Override
-	public boolean deleteItem(DBManager dbManager, DataItem item, boolean isEmpty) {
+	public boolean deleteItem(DBManager dbManager, DataItem item, boolean isParentEmpty) {
 		// TODO Auto-generated method stub
 		SQLiteDatabase db=dbManager.getDB();
 		try
 		{
-			if(isEmpty==false)
+			if(isParentEmpty==false)
 			{
 				db.beginTransaction();
 				try{

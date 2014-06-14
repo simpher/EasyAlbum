@@ -119,6 +119,7 @@ public class FilePicker extends Activity{
 				if(item.getFileType()==FileItem.TYPE_DIRECTORY)
 				{
 					curPath=curPath+"/"+item.getName();
+					tvCurPath.setText(curPath);
 					loadFilesList();
 				}
 			}
@@ -160,7 +161,7 @@ public class FilePicker extends Activity{
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
-		if(keyCode==KeyEvent.KEYCODE_BREAK)
+		if(keyCode==KeyEvent.KEYCODE_BACK)
 		{
 			if(backToParent()==true)
 			{

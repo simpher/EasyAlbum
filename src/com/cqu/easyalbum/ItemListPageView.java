@@ -1,8 +1,6 @@
 package com.cqu.easyalbum;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -185,34 +183,4 @@ public abstract class ItemListPageView extends Activity implements OperationList
 		
 		this.tvCurPageNumber.setText("第"+curPageNumber+"页 "+"共"+totalPage+"页");
 	}
-
-	@Override
-	public void onDeleteItem(final DataItem item) {
-		// TODO Auto-generated method stub
-		AlertDialog.Builder builder=new AlertDialog.Builder(ItemListPageView.this);
-		builder.setTitle("确认").
-		setMessage("确定要删除["+item.getName()+"]吗？").
-		setIcon(android.R.drawable.ic_dialog_alert).
-		setNegativeButton("取消", null);
-		builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				deleteItem(item);
-			}
-			
-		});
-		builder.show();
-	}
-	
-	protected abstract void deleteItem(DataItem item);
-
-	@Override
-	public void onEditItem(DataItem item) {
-		// TODO Auto-generated method stub
-		editItem(item);
-	}
-	
-	protected abstract void editItem(DataItem item);
 }

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.widget.Toast;
 
 import com.cqu.bean.DataItem;
 import com.cqu.bean.ImageItem;
@@ -45,8 +46,15 @@ public class ActivityImageItem extends SimpleItemListView{
 			{
 				String dir=data.getStringExtra("dir");
 				String[] nameItemsSelected=(String[]) data.getStringArrayExtra("selected");
-				String nameItem=nameItemsSelected[0];
-				if(dao.addItem(dbManager, new ImageItem(-1, nameItem, parent.getId(), dir))==true)
+				DataItem[] itemsToAdd=new DataItem[nameItemsSelected.length];
+				for(int i=0;i<itemsToAdd.length;i++)
+				{
+					itemsToAdd[i]=new ImageItem(-1, nameItemsSelected[i], parent.getId(), dir);
+				}
+				
+				int successCount=dao.addItems(dbManager, itemsToAdd);
+				Toast.makeText(this, "新添加图片["+successCount+"/"+itemsToAdd.length+"]", Toast.LENGTH_SHORT).show();
+				if(successCount>0)
 				{
 					itemAddedReset();
 				}
@@ -67,11 +75,11 @@ public class ActivityImageItem extends SimpleItemListView{
 	}
 
 	@Override
-	protected void deleteItem(final DataItem item) {
+	public void onDeleteItem(final DataItem item) {
 		// TODO Auto-generated method stub
 		AlertDialog.Builder builder=new AlertDialog.Builder(this);
 		builder.setTitle("消息").setIcon(android.R.drawable.ic_dialog_alert);
-		builder.setMessage("确认删除图片[+"+item.getName()+"]吗？");
+		builder.setMessage("确认删除图片["+item.getName()+"]吗？");
 		builder.setPositiveButton("确定", new OnClickListener() {
 			
 			@Override
@@ -87,7 +95,7 @@ public class ActivityImageItem extends SimpleItemListView{
 	}
 
 	@Override
-	protected void editItem(DataItem item) {
+	public void onEditItem(DataItem item) {
 		// TODO Auto-generated method stub
 		Intent intent=new Intent();
 		intent.setClass(this, ActivityEditImageItem.class);

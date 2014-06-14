@@ -33,16 +33,15 @@ public class ActivityAlbum extends SimpleItemListView {
 				// TODO Auto-generated method stub
 				String name=data.getStringExtra("name");
 				DaoAlbum dao=new DaoAlbum();
-				if(dao.exists(dbManager, new DataItem(-1, name), null)==-1)
-				{
-					dao.addItem(dbManager, new DataItem(-1, name));
-					
-					itemAddedReset();
-					return true;
-				}else
+				int successCount=dao.addItem(dbManager, new DataItem(-1, name));
+				if(successCount==0)
 				{
 					Toast.makeText(ActivityAlbum.this, "相册["+name+"]已存在", Toast.LENGTH_SHORT).show();
 					return false;
+				}else
+				{
+					itemAddedReset();
+					return true;
 				}
 			}
 			
@@ -64,11 +63,19 @@ public class ActivityAlbum extends SimpleItemListView {
 		intent.putExtra(ActivityAlbum.KEY_ALBUM, item);
 		startActivity(intent);
 	}
+	
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		
+		dbManager.close();
+	}
 
 	@Override
-	protected void deleteItem(final DataItem item) {
+	public void onDeleteItem(final DataItem item) {
 		// TODO Auto-generated method stub
-		final int imageCount=((DaoAlbum)dao).queryImageCount(dbManager, item.getId());
+        final int imageCount=((DaoAlbum)dao).queryImageCount(dbManager, item.getId());
 		
 		AlertDialog.Builder builder=new AlertDialog.Builder(this);
 		builder.setTitle("消息").setIcon(android.R.drawable.ic_dialog_alert);
@@ -88,19 +95,11 @@ public class ActivityAlbum extends SimpleItemListView {
 	}
 
 	@Override
-	protected void editItem(DataItem item) {
+	public void onEditItem(DataItem item) {
 		// TODO Auto-generated method stub
 		Intent intent=new Intent();
 		intent.setClass(this, ActivityEditAlbum.class);
 		intent.putExtra(ActivityAlbum.KEY_ALBUM, item);
 		startActivity(intent);
-	}
-	
-	@Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
-		
-		dbManager.close();
 	}
 }
