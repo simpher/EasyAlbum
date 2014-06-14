@@ -31,7 +31,7 @@ public class ActivityImageItem extends SimpleItemListView{
 		// TODO Auto-generated method stub
 		Intent intent=new Intent();
 		intent.setClass(this, FilePicker.class);
-		intent.putExtra(FilePicker.KEY_FILE_FILTER, FileFilterUtil.IMAGE_GENERAL);
+		intent.putExtra(FilePicker.KEY_FILE_FILTER, FileFilterUtil.FILTER_GENERAL_IMAGE);
 		intent.putExtra(FilePicker.KEY_MULTISELECTABLE, true);
 		startActivityForResult(intent, REQUEST_CODE_ADD_IMAGEITEM);
 	}

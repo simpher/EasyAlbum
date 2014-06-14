@@ -5,9 +5,12 @@ import java.io.FileFilter;
 
 public class FileFilterUtil {
 	
-	public static final String DIRECTORY="*";
-	public static final String ALLFILE=".*";
-	public static final String[] IMAGE_GENERAL=new String[]{".jpg", ".png", ".gif"};
+	public static final String FLAG_DIRECTORY_ONLY="*";
+	private static final String FLAG_ALL_FILE=".*";
+	
+	public static final String[] FILTER_ALL_FILE=new String[]{FLAG_ALL_FILE};
+	public static final String[] FILTER_DIRECTORY_ONLY=new String[]{FLAG_DIRECTORY_ONLY};
+	public static final String[] FILTER_GENERAL_IMAGE=new String[]{".jpg", ".png", ".gif"};
 	
 	public static FileFilter getFileFilter(final String[] filterExts)
 	{
@@ -20,10 +23,10 @@ public class FileFilterUtil {
 				{
 					return true;
 				}
-				if(filterExts[0].equals(DIRECTORY))
+				if(filterExts[0].equals(FLAG_DIRECTORY_ONLY))
 				{
 					return false;
-				}else if(filterExts[0].equals(ALLFILE))
+				}else if(filterExts[0].equals(FLAG_ALL_FILE))
 				{
 					return true;
 				}

@@ -49,7 +49,7 @@ public class FilePicker extends Activity{
 		if(intent.getSerializableExtra(KEY_FILE_FILTER)!=null)
 		{
 			String[] filterExts=intent.getStringArrayExtra(KEY_FILE_FILTER);
-			if(filterExts[0].equals(FileFilterUtil.DIRECTORY))
+			if(filterExts[0].equals(FileFilterUtil.FLAG_DIRECTORY_ONLY))
 			{
 				directoryOnly=true;
 			}

@@ -9,6 +9,8 @@ import com.cqu.db.DBManager;
 import com.cqu.db.DataModel;
 import com.cqu.db.DataModel.PageModel;
 import com.cqu.easyalbum.R;
+import com.cqu.util.BitmapUtil;
+
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -100,6 +102,8 @@ public class SimpleImageViewer extends Activity{
 		}
 		if(imageItem!=null)
 		{
+			BitmapUtil.recycleBmp(image);//回收部分内存
+			
 			image=BitmapFactory.decodeFile(imageItem.getDir()+"/"+imageItem.getName());
 			ivImageViewer.setImageBitmap(image);
 			ivImageViewer.init(image.getWidth(), image.getHeight());
