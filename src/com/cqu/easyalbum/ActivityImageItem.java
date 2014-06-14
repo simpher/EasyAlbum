@@ -13,7 +13,7 @@ import com.cqu.bean.DataItem;
 import com.cqu.bean.ImageItem;
 import com.cqu.dao.DaoAlbum;
 import com.cqu.dao.DaoImageItem;
-import com.cqu.dialog.DialogAddSimpleItem;
+import com.cqu.dialog.DialogChooseAlbum;
 import com.cqu.dialog.DialogListener;
 import com.cqu.filepicker.FileFilterUtil;
 import com.cqu.filepicker.FilePicker;
@@ -104,17 +104,23 @@ public class ActivityImageItem extends SimpleItemListView{
 	@Override
 	public void onEditItem(final DataItem item) {
 		// TODO Auto-generated method stub
-            DialogAddSimpleItem dialogAddAlbum=new DialogAddSimpleItem(this, new DialogListener() {
+		DialogChooseAlbum dialogChooseAlbum=new DialogChooseAlbum(this, BufferAlbumListChoosable.getAvailAlbums(this), "相册名", new DialogListener() {
 			
 			@Override
 			public boolean onOk(Intent data) {
 				// TODO Auto-generated method stub
 				String name=data.getStringExtra("name").trim();
+				String type=data.getStringExtra("type");
 				DaoAlbum dao=new DaoAlbum();
 				int albumId=dao.existsByName(dbManager, new DataItem(-1, name));
 				if(albumId==-1)
 				{
 					Toast.makeText(ActivityImageItem.this, "相册["+name+"]不存在", Toast.LENGTH_SHORT).show();
+					if(type.equals("selected"))
+					{
+						//清除无效的BufferedAlbumItemList item
+						BufferAlbumListChoosable.removeInvalidAlbums(ActivityImageItem.this, name);
+					}
 					return false;
 				}
 				DaoImageItem daoImageItem=new DaoImageItem();
@@ -122,7 +128,12 @@ public class ActivityImageItem extends SimpleItemListView{
 				int successCount=daoImageItem.addItem(dbManager, new ImageItem(imageItem.getId(), imageItem.getName(), albumId, imageItem.getDir()));
 				if(successCount>=0)
 				{
-					Toast.makeText(ActivityImageItem.this, "添加至相册["+successCount+"/1]", Toast.LENGTH_SHORT).show();
+					if(successCount==1)
+					{
+						BufferAlbumListChoosable.saveAvailAlbums(ActivityImageItem.this, name);
+					}
+					
+					Toast.makeText(ActivityImageItem.this, "添加图片["+successCount+"/1]", Toast.LENGTH_SHORT).show();
 					return true;
 				}else
 				{
@@ -136,9 +147,9 @@ public class ActivityImageItem extends SimpleItemListView{
 				// TODO Auto-generated method stub
 				
 			}
-		}, "相册名");
-		dialogAddAlbum.setTitle("添加至相册");
-		dialogAddAlbum.show();
+		});
+		dialogChooseAlbum.setTitle("添加至相册");
+		dialogChooseAlbum.show();
 	}
 
 	@Override
