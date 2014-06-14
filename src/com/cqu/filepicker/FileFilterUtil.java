@@ -12,14 +12,14 @@ public class FileFilterUtil {
 	public static final String[] FILTER_DIRECTORY_ONLY=new String[]{FLAG_DIRECTORY_ONLY};
 	public static final String[] FILTER_GENERAL_IMAGE=new String[]{".jpg", ".png", ".gif"};
 	
-	public static FileFilter getFileFilter(final String[] filterExts)
+	public static FileFilter getFileFilter(final String[] filterExts, final boolean directoryVisible)
 	{
 		FileFilter filter=new FileFilter() {
 			
 			@Override
 			public boolean accept(File pathname) {
 				// TODO Auto-generated method stub
-				if(pathname.isDirectory())
+				if(directoryVisible==true&&pathname.isDirectory())
 				{
 					return true;
 				}

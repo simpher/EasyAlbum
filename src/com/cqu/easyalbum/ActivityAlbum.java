@@ -95,6 +95,7 @@ public class ActivityAlbum extends SimpleItemListView {
 				}
 			}
 		});
+		builder.setNegativeButton("取消", null);
 		builder.show();
 	}
 

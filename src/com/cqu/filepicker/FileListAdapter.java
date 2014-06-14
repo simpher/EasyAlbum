@@ -10,6 +10,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -97,20 +98,35 @@ public class FileListAdapter extends BaseAdapter{
 			}else
 			{
 				holder.tvBgSelection.setVisibility(View.VISIBLE);
-				setOnClickListener(holder, position);
+				holder.tvBgSelection.setOnClickListener(new OnClickListener() {
+					
+					@SuppressLint("InlinedApi")
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						setSelected(position);
+					}
+				});
 			}
 		}else
 		{
-			if(fileItems.get(position).getFileType()==FileItem.TYPE_DIRECTORY)
+			if(itemSelected[position]==true)
 			{
 				holder.tvBgSelection.setVisibility(View.VISIBLE);
-                setOnClickListener(holder, position);
+				holder.tvBgSelection.setOnLongClickListener(new OnLongClickListener() {
+					
+					@Override
+					public boolean onLongClick(View v) {
+						// TODO Auto-generated method stub
+						setSelected(position);
+						return true;
+					}
+				});
 			}else
 			{
 				holder.tvBgSelection.setVisibility(View.INVISIBLE);
 			}
 		}
-		
 		
 		if(itemSelected[position]==true)
 		{
@@ -132,33 +148,25 @@ public class FileListAdapter extends BaseAdapter{
 		return convertView;
 	}
 	
-	private void setOnClickListener(final ViewHolder holder, final int position)
+	public void setSelected(final int position)
 	{
-		holder.tvBgSelection.setOnClickListener(new OnClickListener() {
-			
-			@SuppressLint("InlinedApi")
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				if(itemSelected[position]==false)
-				{
-					if(multiSelectable==false&&selectedItemCount>=1)
-					{
-						itemSelected[lastSelectedItemPosition]=false;
-						selectedItemCount--;
-					}
-					itemSelected[position]=true;
-					selectedItemCount++;
-					
-					lastSelectedItemPosition=position;
-				}else
-				{
-					itemSelected[position]=false;
-					selectedItemCount--;
-				}
-				notifyDataSetChanged();
+		if(itemSelected[position]==false)
+		{
+			if(multiSelectable==false&&selectedItemCount>=1)
+			{
+				itemSelected[lastSelectedItemPosition]=false;
+				selectedItemCount--;
 			}
-		});
+			itemSelected[position]=true;
+			selectedItemCount++;
+			
+			lastSelectedItemPosition=position;
+		}else
+		{
+			itemSelected[position]=false;
+			selectedItemCount--;
+		}
+		notifyDataSetChanged();
 	}
 	
 	final class ViewHolder {

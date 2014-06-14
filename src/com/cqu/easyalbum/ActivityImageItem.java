@@ -1,11 +1,19 @@
 package com.cqu.easyalbum;
 
+import java.io.File;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
 
@@ -20,11 +28,14 @@ import com.cqu.filepicker.FilePicker;
 import com.cqu.imageviewer.SimpleImageViewer;
 import com.cqu.listadapter.ItemListAdapterForImageItem;
 import com.cqu.listadapter.OperationListener;
+import com.cqu.util.HandlerUtil;
 
 public class ActivityImageItem extends SimpleItemListView{
 	
 	public static final String KEY_IMAGEITEM="KEY_IMAGEITEM";
 	public static final int REQUEST_CODE_ADD_IMAGEITEM=101;
+	
+	private Dialog dialgTaskRunning;
 	
 	@Override
 	protected void initData() {
@@ -37,11 +48,34 @@ public class ActivityImageItem extends SimpleItemListView{
 	@Override
 	protected void addItem() {
 		// TODO Auto-generated method stub
-		Intent intent=new Intent();
-		intent.setClass(this, FilePicker.class);
-		intent.putExtra(FilePicker.KEY_FILE_FILTER, FileFilterUtil.FILTER_GENERAL_IMAGE);
-		intent.putExtra(FilePicker.KEY_MULTISELECTABLE, true);
-		startActivityForResult(intent, REQUEST_CODE_ADD_IMAGEITEM);
+		
+		AlertDialog.Builder builder=new AlertDialog.Builder(this);
+		builder.setTitle("添加图片").setMessage("添加图片或目录？").setNegativeButton("取消", null);
+		builder.setNeutralButton("目录", new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				Intent intent=new Intent();
+				intent.setClass(ActivityImageItem.this, FilePicker.class);
+				intent.putExtra(FilePicker.KEY_FILE_FILTER, FileFilterUtil.FILTER_DIRECTORY_ONLY);
+				intent.putExtra(FilePicker.KEY_MULTISELECTABLE, false);
+				startActivityForResult(intent, REQUEST_CODE_ADD_IMAGEITEM);
+			}
+		});
+		builder.setPositiveButton("图片", new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				Intent intent=new Intent();
+				intent.setClass(ActivityImageItem.this, FilePicker.class);
+				intent.putExtra(FilePicker.KEY_FILE_FILTER, FileFilterUtil.FILTER_GENERAL_IMAGE);
+				intent.putExtra(FilePicker.KEY_MULTISELECTABLE, true);
+				startActivityForResult(intent, REQUEST_CODE_ADD_IMAGEITEM);
+			}
+		});
+		builder.show();
 	}
 	
 	@Override
@@ -51,24 +85,88 @@ public class ActivityImageItem extends SimpleItemListView{
 		{
 			if(resultCode==Activity.RESULT_OK)
 			{
+				boolean directoryOnly=data.getBooleanExtra("directoryOnly", false);
 				String dir=data.getStringExtra("dir");
 				String[] nameItemsSelected=(String[]) data.getStringArrayExtra("selected");
-				DataItem[] itemsToAdd=new DataItem[nameItemsSelected.length];
-				for(int i=0;i<itemsToAdd.length;i++)
+				final DataItem[] itemsToAdd;
+				if(directoryOnly==true)
 				{
-					itemsToAdd[i]=new ImageItem(-1, nameItemsSelected[i], parent.getId(), dir);
+					String imageDir=dir+"/"+nameItemsSelected[0];
+					File f=new File(imageDir);
+					File[] files=f.listFiles(FileFilterUtil.getFileFilter(FileFilterUtil.FILTER_GENERAL_IMAGE, false));
+					if(files!=null&&files.length>0)
+					{
+						itemsToAdd=new DataItem[files.length];
+						for(int i=0;i<itemsToAdd.length;i++)
+						{
+							itemsToAdd[i]=new ImageItem(-1, files[i].getName(), parent.getId(), imageDir);
+						}
+					}else
+					{
+						itemsToAdd=null;
+						Toast.makeText(ActivityImageItem.this, "此目录中无图片文件", Toast.LENGTH_LONG).show();
+						return;
+					}
+				}else//表示添加的是图片
+				{
+					itemsToAdd=new DataItem[nameItemsSelected.length];
+					for(int i=0;i<itemsToAdd.length;i++)
+					{
+						itemsToAdd[i]=new ImageItem(-1, nameItemsSelected[i], parent.getId(), dir);
+					}
 				}
 				
-				int successCount=dao.addItems(dbManager, itemsToAdd);
-				Toast.makeText(this, "新添加图片["+successCount+"/"+itemsToAdd.length+"]", Toast.LENGTH_SHORT).show();
-				if(successCount>0)
-				{
-					itemAddedReset();
-				}
+				//此处开启线程处理批量插入工作，并显示进度框
+				dialgTaskRunning=new ProgressDialog(this);
+				dialgTaskRunning.setTitle("添加图片中...");
+				dialgTaskRunning.setCancelable(false);
+				dialgTaskRunning.setCanceledOnTouchOutside(false);
+				dialgTaskRunning.show();
+				
+				GeneralTaskThread task=new GeneralTaskThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						int successCount=dao.addItems(dbManager, itemsToAdd);
+						
+						Message msg=new Message();
+						Bundle data=new Bundle();
+						data.putInt("successCount", successCount);
+						data.putInt("totalCount", itemsToAdd.length);
+						msg.setData(data);
+						
+						handlerTaskAddImageItems.sendMessage(msg);
+					}
+				});
+				task.start();
 			}
 		}
 		//super.onActivityResult(requestCode, resultCode, data);
 	}
+	
+	@SuppressLint("HandlerLeak")
+	private Handler handlerTaskAddImageItems=new Handler()
+	{
+		public void handleMessage(android.os.Message msg) 
+		{
+			if(msg.what==HandlerUtil.TYPE_MESSAGE_SUCCEED)
+			{
+				Bundle data=msg.getData();
+				int successCount=data.getInt("successCount");
+				int totalCount=data.getInt("totalCount");
+				Toast.makeText(ActivityImageItem.this, "新添加图片["+successCount+"/"+totalCount+"]", Toast.LENGTH_SHORT).show();
+				if(successCount>0)
+				{
+					itemAddedReset();
+				}
+				if(dialgTaskRunning!=null)
+				{
+					dialgTaskRunning.dismiss();
+				}
+			}
+		};
+	};
 
 	@Override
 	protected void itemSelected(int index, DataItem item) {
@@ -98,6 +196,7 @@ public class ActivityImageItem extends SimpleItemListView{
 				}
 			}
 		});
+		builder.setNegativeButton("取消", null);
 		builder.show();
 	}
 

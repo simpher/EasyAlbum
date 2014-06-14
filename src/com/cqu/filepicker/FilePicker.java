@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -56,7 +57,7 @@ public class FilePicker extends Activity{
 			{
 				directoryOnly=true;
 			}
-			filter=FileFilterUtil.getFileFilter(filterExts);
+			filter=FileFilterUtil.getFileFilter(filterExts, true);
 		}
 		multiSelectable=intent.getBooleanExtra(KEY_MULTISELECTABLE, false);
 		
@@ -89,6 +90,7 @@ public class FilePicker extends Activity{
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Intent data=new Intent();
+				data.putExtra("directoryOnly", directoryOnly);
 				data.putExtra("dir", curPath);
 				String[] items=((FileListAdapter)filesListAdapter).selectedItems();
 				if(items.length==0)
@@ -98,6 +100,7 @@ public class FilePicker extends Activity{
 				}
 				data.putExtra("selected", items);
 				setResult(Activity.RESULT_OK, data);
+				
 				finish();
 			}
 		});
@@ -111,6 +114,20 @@ public class FilePicker extends Activity{
 				finish();
 			}
 		});
+		
+		if(directoryOnly==true)
+		{
+			lvFiles.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+				@Override
+				public boolean onItemLongClick(AdapterView<?> parent,
+						View view, int position, long id) {
+					// TODO Auto-generated method stub
+					((FileListAdapter)filesListAdapter).setSelected(position);
+					return true;
+				}
+			});
+		}
 
 		lvFiles.setOnItemClickListener(new OnItemClickListener() {
 
@@ -137,16 +154,23 @@ public class FilePicker extends Activity{
 		File f=new File(curPath);
 		File[] files=f.listFiles(filter);
 		
-		List<FileItem> items=new ArrayList<FileItem>();
-		for(int i=0;i<files.length;i++)
+		if(files!=null&&files.length>0)
 		{
-			items.add(new FileItem(files[i].isDirectory()?FileItem.TYPE_DIRECTORY:FileItem.TYPE_FILE ,files[i].getName()));
+			List<FileItem> items=new ArrayList<FileItem>();
+			for(int i=0;i<files.length;i++)
+			{
+				items.add(new FileItem(files[i].isDirectory()?FileItem.TYPE_DIRECTORY:FileItem.TYPE_FILE ,files[i].getName()));
+			}
+			
+			Collections.sort(items, new FileItemComparator());
+			
+			filesListAdapter=new FileListAdapter(this, items, multiSelectable, directoryOnly);
+			this.lvFiles.setAdapter(filesListAdapter);
+		}else
+		{
+			filesListAdapter=new FileListAdapter(this, new ArrayList<FileItem>(), multiSelectable, directoryOnly);
+			this.lvFiles.setAdapter(filesListAdapter);
 		}
-		
-		Collections.sort(items, new FileItemComparator());
-		
-		filesListAdapter=new FileListAdapter(this, items, multiSelectable, directoryOnly);
-		this.lvFiles.setAdapter(filesListAdapter);
 	}
 	
 	private boolean backToParent()
