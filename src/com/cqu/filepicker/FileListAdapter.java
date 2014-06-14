@@ -19,7 +19,7 @@ public class FileListAdapter extends BaseAdapter{
 	
 	private LayoutInflater mInflater;
 	
-	private FileItem[] fileItems;
+	private List<FileItem> fileItems;
 	private boolean[] itemSelected;
 	private boolean multiSelectable=false;
 	private boolean directoryOnly=false;
@@ -27,14 +27,14 @@ public class FileListAdapter extends BaseAdapter{
 	private int selectedItemCount=0;
 	
 	@SuppressLint("UseSparseArrays")
-	public FileListAdapter(Context context, FileItem[] fileItems, boolean multiSelectable, boolean directoryOnly) {
+	public FileListAdapter(Context context, List<FileItem> fileItems, boolean multiSelectable, boolean directoryOnly) {
 		// TODO Auto-generated constructor stub
 		mInflater = LayoutInflater.from(context);
 		this.fileItems=fileItems;
 		this.multiSelectable=multiSelectable;
 		this.directoryOnly=directoryOnly;
 		
-		itemSelected=new boolean[fileItems.length];
+		itemSelected=new boolean[fileItems.size()];
 		ArrayUtil.initArray(itemSelected, false);
 	}
 	
@@ -45,7 +45,7 @@ public class FileListAdapter extends BaseAdapter{
 		{
 			if(itemSelected[i]==true)
 			{
-				list.add(fileItems[i].getName());
+				list.add(fileItems.get(i).getName());
 			}
 		}
 		String[] ret=new String[list.size()];
@@ -55,13 +55,13 @@ public class FileListAdapter extends BaseAdapter{
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
-		return fileItems.length;
+		return fileItems.size();
 	}
 
 	@Override
 	public Object getItem(int position) {
 		// TODO Auto-generated method stub
-		return fileItems[position];
+		return fileItems.get(position);
 	}
 
 	@Override
@@ -91,7 +91,7 @@ public class FileListAdapter extends BaseAdapter{
 		
 		if(directoryOnly==false)
 		{
-			if(fileItems[position].getFileType()==FileItem.TYPE_DIRECTORY)
+			if(fileItems.get(position).getFileType()==FileItem.TYPE_DIRECTORY)
 			{
 				holder.tvBgSelection.setVisibility(View.INVISIBLE);
 			}else
@@ -101,7 +101,7 @@ public class FileListAdapter extends BaseAdapter{
 			}
 		}else
 		{
-			if(fileItems[position].getFileType()==FileItem.TYPE_DIRECTORY)
+			if(fileItems.get(position).getFileType()==FileItem.TYPE_DIRECTORY)
 			{
 				holder.tvBgSelection.setVisibility(View.VISIBLE);
                 setOnClickListener(holder, position);
@@ -120,8 +120,8 @@ public class FileListAdapter extends BaseAdapter{
 			holder.tvBgSelection.setBackgroundColor(convertView.getResources().getColor(android.R.color.transparent));
 		}
 		
-		holder.tvItemName.setText(fileItems[position].getName());
-		if(fileItems[position].getFileType()==FileItem.TYPE_DIRECTORY)
+		holder.tvItemName.setText(fileItems.get(position).getName());
+		if(fileItems.get(position).getFileType()==FileItem.TYPE_DIRECTORY)
 		{
 			holder.ivItemIcon.setImageResource(R.drawable.folder);
 		}else

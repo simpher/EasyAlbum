@@ -2,6 +2,9 @@ package com.cqu.filepicker;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.cqu.easyalbum.R;
 import com.cqu.util.FileUtil;
@@ -134,11 +137,13 @@ public class FilePicker extends Activity{
 		File f=new File(curPath);
 		File[] files=f.listFiles(filter);
 		
-		FileItem[] items=new FileItem[files.length];
-		for(int i=0;i<items.length;i++)
+		List<FileItem> items=new ArrayList<FileItem>();
+		for(int i=0;i<files.length;i++)
 		{
-			items[i]=new FileItem(files[i].isDirectory()?FileItem.TYPE_DIRECTORY:FileItem.TYPE_FILE ,files[i].getName());
+			items.add(new FileItem(files[i].isDirectory()?FileItem.TYPE_DIRECTORY:FileItem.TYPE_FILE ,files[i].getName()));
 		}
+		
+		Collections.sort(items, new FileItemComparator());
 		
 		filesListAdapter=new FileListAdapter(this, items, multiSelectable, directoryOnly);
 		this.lvFiles.setAdapter(filesListAdapter);
