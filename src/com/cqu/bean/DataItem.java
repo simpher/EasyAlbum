@@ -7,7 +7,7 @@ public class DataItem implements Serializable{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -3224923121763482699L;
+	private static final long serialVersionUID = 9060549670117710750L;
 	
 	protected int id;
 	protected String name;

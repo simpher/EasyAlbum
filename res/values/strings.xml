@@ -22,6 +22,10 @@
     <string name="more_operations">></string>
     <string name="back_to_parent">上一层</string>
     
+    <string name="previous_item">上一幅</string>
+    <string name="next_item">下一幅</string>
+    <string name="item_number_indicator">第1幅 共3幅</string>
+    
     <string name="page_number_indicator">第1页 共3页</string>
     <string name="index_one">1</string>
 

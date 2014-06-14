@@ -2,9 +2,15 @@ package com.cqu.util;
 
 public class FileUtil {
 	
-	public static String fileName(String filePath)
+	/**
+	 * 
+	 * @param filePath
+	 * @return {dir, name}
+	 */
+	public static String[] fileDirName(String filePath)
 	{
-		return filePath.substring(filePath.lastIndexOf('/')+1);
+		int index=filePath.lastIndexOf('/');
+		return new String[]{filePath.substring(0, index), filePath.substring(index+1)};
 	}
 	
 	public static String parentPath(String path)

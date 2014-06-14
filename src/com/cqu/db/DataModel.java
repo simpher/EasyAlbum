@@ -1,5 +1,6 @@
 package com.cqu.db;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class DataModel {
@@ -55,8 +56,18 @@ public class DataModel {
 		return this.totalPageCount;
 	}
 	
-	public static class PageModel
+	public int getTotalItemCount()
 	{
+		return this.totalItemCount;
+	}
+	
+	public static class PageModel implements Serializable
+	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1513678064703315734L;
+		
 		public final int pagePerBatch;
 		public final int countPerPage;
 		

@@ -19,7 +19,7 @@ public class DBHelper extends SQLiteOpenHelper{
 	public void onCreate(SQLiteDatabase db) {
 		// TODO Auto-generated method stub
 		String sqlAlbum="create table Album(id integer primary key autoincrement, name varchar(50) not null)";
-		String sqlImageItem="create table ImageItem(id integer primary key autoincrement, albumid integer not null, path varchar(200) not null, foreign key(albumid) references Album(id))";
+		String sqlImageItem="create table ImageItem(id integer primary key autoincrement, albumid integer not null, dir varchar(200) not null, name varchar(100) not null, foreign key(albumid) references Album(id))";
 		
 		db.execSQL(sqlAlbum);
 		db.execSQL(sqlImageItem);

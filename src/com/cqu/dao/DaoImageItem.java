@@ -13,7 +13,6 @@ import com.cqu.bean.ImageItem;
 import com.cqu.db.DBManager;
 import com.cqu.db.DataModel;
 import com.cqu.db.DataModel.PageModel;
-import com.cqu.util.FileUtil;
 
 public class DaoImageItem implements GeneralDaoInterface{
 	
@@ -54,9 +53,8 @@ public class DaoImageItem implements GeneralDaoInterface{
 		List<Object[]> itemList=null;
 		try
 		{
-			String sql="select id, path from ImageItem where albumid="+parent.getId()+" limit "+pageModel.countPerBatch()+" offset "+ offset;
+			String sql="select id, name, dir from ImageItem where albumid="+parent.getId()+" limit "+pageModel.countPerBatch()+" offset "+ offset;
 			c=db.rawQuery(sql, null);
-			String path="";
 			if(c!=null&&c.getCount()>0)
 			{
 				int pageCount=(c.getCount()+pageModel.countPerPage-1)/pageModel.countPerPage;
@@ -69,8 +67,7 @@ public class DaoImageItem implements GeneralDaoInterface{
 					for(int i=0;i<pageModel.countPerPage;i++)
 					{
 						c.move(1);
-						path=c.getString(1);
-						itemsOfAPage[i]=new ImageItem(c.getInt(0), FileUtil.fileName(path), parent.getId(), path);
+						itemsOfAPage[i]=new ImageItem(c.getInt(0), c.getString(1), parent.getId(), c.getString(2));
 					}
 					itemList.add(itemsOfAPage);
 				}
@@ -84,8 +81,7 @@ public class DaoImageItem implements GeneralDaoInterface{
 						for(int i=0;i<remainingCount;i++)
 						{
 							c.move(1);
-							path=c.getString(1);
-							itemsOfLastPage[i]=new ImageItem(c.getInt(0), FileUtil.fileName(path), parent.getId(), path);
+							itemsOfLastPage[i]=new ImageItem(c.getInt(0), c.getString(1), parent.getId(), c.getString(2));
 						}
 						itemList.add(itemsOfLastPage);
 					}
@@ -152,9 +148,8 @@ public class DaoImageItem implements GeneralDaoInterface{
 		List<Object[]> itemList=null;
 		try
 		{
-			String sql="select id, path from ImageItem where albumid="+parent.getId()+" and name like '%"+nameFragment+"%' limit "+pageModel.countPerBatch()+" offset "+ offset;
+			String sql="select id, name, dir from ImageItem where albumid="+parent.getId()+" and name like '%"+nameFragment+"%' limit "+pageModel.countPerBatch()+" offset "+ offset;
 			c=db.rawQuery(sql, null);
-			String path="";
 			if(c!=null&&c.getCount()>0)
 			{
 				int pageCount=(c.getCount()+pageModel.countPerPage-1)/pageModel.countPerPage;
@@ -167,8 +162,7 @@ public class DaoImageItem implements GeneralDaoInterface{
 					for(int i=0;i<pageModel.countPerPage;i++)
 					{
 						c.move(1);
-						path=c.getString(1);
-						itemsOfAPage[i]=new ImageItem(c.getInt(0), FileUtil.fileName(path), parent.getId(), path);
+						itemsOfAPage[i]=new ImageItem(c.getInt(0), c.getString(1), parent.getId(), c.getString(2));
 					}
 					itemList.add(itemsOfAPage);
 				}
@@ -182,8 +176,7 @@ public class DaoImageItem implements GeneralDaoInterface{
 						for(int i=0;i<remainingCount;i++)
 						{
 							c.move(1);
-							path=c.getString(1);
-							itemsOfLastPage[i]=new ImageItem(c.getInt(0), FileUtil.fileName(path), parent.getId(), path);
+							itemsOfLastPage[i]=new ImageItem(c.getInt(0), c.getString(1), parent.getId(), c.getString(2));
 						}
 						itemList.add(itemsOfLastPage);
 					}
@@ -214,12 +207,13 @@ public class DaoImageItem implements GeneralDaoInterface{
 	}
 	
 	@Override
-	public int exists(DBManager dbManager, String name, DataItem parent) {
+	public int exists(DBManager dbManager, DataItem item, DataItem parent) {
 		// TODO Auto-generated method stub
+		ImageItem imageItem=(ImageItem) item;
 		SQLiteDatabase db=dbManager.getDB();
 		Cursor c=null;
 		try{
-			String sql="select id from ImageItem where albumId="+parent.getId()+" and path='"+name+"'";
+			String sql="select id from ImageItem where albumid="+parent.getId()+" and dir="+imageItem.getDir()+" and name='"+imageItem.getName()+"'";
 			c=db.rawQuery(sql, null);
 			if(c!=null&&c.getCount()>0)
 			{
@@ -249,7 +243,8 @@ public class DaoImageItem implements GeneralDaoInterface{
 		try{
 			ContentValues cv=new ContentValues();
 			cv.put("albumid", imageItem.getAlbumId());
-			cv.put("path", imageItem.getPath());
+			cv.put("dir", imageItem.getDir());
+			cv.put("name", imageItem.getName());
 			db.insert("ImageItem", null, cv);
 			return true;
 		}catch(SQLException e)
@@ -271,7 +266,8 @@ public class DaoImageItem implements GeneralDaoInterface{
 				imageItem=(ImageItem) item;
 				ContentValues cv=new ContentValues();
 				cv.put("albumid", imageItem.getAlbumId());
-				cv.put("path", imageItem.getPath());
+				cv.put("dir", imageItem.getDir());
+				cv.put("name", imageItem.getName());
 				db.insert("ImageItem", null, cv);
 			}
 			db.setTransactionSuccessful();
@@ -293,7 +289,7 @@ public class DaoImageItem implements GeneralDaoInterface{
 		ImageItem imageItem=(ImageItem) itemNew;
 		try{
 			ContentValues cv=new ContentValues();
-			cv.put("path", imageItem.getPath());
+			cv.put("name", imageItem.getName());
 			db.update("ImageItem", cv, "id=?", new String[]{imageItem.getId()+""});
 			return true;
 		}catch(SQLException e)
@@ -304,12 +300,12 @@ public class DaoImageItem implements GeneralDaoInterface{
 	}
 
 	@Override
-	public boolean deleteItem(DBManager dbManager, int id, boolean isEmpty) {
+	public boolean deleteItem(DBManager dbManager, DataItem item, boolean isEmpty) {
 		// TODO Auto-generated method stub
 		SQLiteDatabase db=dbManager.getDB();
 		try
 		{
-			DaoGeneral.deleteTableRecord(db, "ImageItem", id);
+			DaoGeneral.deleteTableRecord(db, "ImageItem", item.getId());
 			return true;
 		}catch(SQLException e)
 		{
@@ -324,15 +320,15 @@ public class DaoImageItem implements GeneralDaoInterface{
 	}
 	
 	@Override
-	public boolean deleteItems(DBManager dbManager, int[] ids) {
+	public boolean deleteItems(DBManager dbManager, DataItem[] items) {
 		// TODO Auto-generated method stub
 		SQLiteDatabase db=dbManager.getDB();
 		db.beginTransaction();
 		try
 		{
-			for(int id : ids)
+			for(DataItem item : items)
 			{
-				DaoGeneral.deleteTableRecord(db, "ImageItem", id);
+				DaoGeneral.deleteTableRecord(db, "ImageItem", item.getId());
 			}
 			db.setTransactionSuccessful();
 			

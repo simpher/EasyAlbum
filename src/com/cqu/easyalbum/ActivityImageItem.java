@@ -32,7 +32,7 @@ public class ActivityImageItem extends SimpleItemListView{
 		Intent intent=new Intent();
 		intent.setClass(this, FilePicker.class);
 		intent.putExtra(FilePicker.KEY_FILE_FILTER, FileFilterUtil.IMAGE_GENERAL);
-		intent.putExtra(FilePicker.KEY_MULTISELECTABLE, false);
+		intent.putExtra(FilePicker.KEY_MULTISELECTABLE, true);
 		startActivityForResult(intent, REQUEST_CODE_ADD_IMAGEITEM);
 	}
 	
@@ -43,10 +43,10 @@ public class ActivityImageItem extends SimpleItemListView{
 		{
 			if(resultCode==Activity.RESULT_OK)
 			{
-				String path=data.getStringExtra("path");
-				String[] itemsSelected=(String[]) data.getStringArrayExtra("selected");
-				String item=itemsSelected[0];
-				if(dao.addItem(dbManager, new ImageItem(-1, item, parent.getId(), path+"/"+item))==true)
+				String dir=data.getStringExtra("dir");
+				String[] nameItemsSelected=(String[]) data.getStringArrayExtra("selected");
+				String nameItem=nameItemsSelected[0];
+				if(dao.addItem(dbManager, new ImageItem(-1, nameItem, parent.getId(), dir))==true)
 				{
 					itemAddedReset();
 				}
@@ -56,11 +56,13 @@ public class ActivityImageItem extends SimpleItemListView{
 	}
 
 	@Override
-	protected void itemSelected(DataItem item) {
+	protected void itemSelected(int index, DataItem item) {
 		// TODO Auto-generated method stub
 		Intent intent=new Intent();
 		intent.setClass(this, SimpleImageViewer.class);
-		intent.putExtra(KEY_IMAGEITEM, item);
+		intent.putExtra("album", parent);
+		intent.putExtra("pageModel", pageModel);
+		intent.putExtra("curItemNumber", (getCurPageNumber()-1)*pageModel.countPerPage+index+1);
 		startActivity(intent);
 	}
 
@@ -75,7 +77,7 @@ public class ActivityImageItem extends SimpleItemListView{
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
-				if(dao.deleteItem(dbManager, item.getId(), true)==true)
+				if(dao.deleteItem(dbManager, new DataItem(item.getId(), ""), true)==true)
 				{
 					itemDeletedReset();
 				}

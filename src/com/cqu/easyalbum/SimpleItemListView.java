@@ -16,7 +16,7 @@ public abstract class SimpleItemListView extends ItemListPageView{
 	protected String headOperation="";
 	private final String HEAD_OPERATION_FOR_VIEW_MODE_SEARCH_DATA="退出搜索视图";
 	
-	private DataModel.PageModel pageModel=null;
+	protected DataModel.PageModel pageModel=null;
 	private DataModel dataModel=null;
 	
 	protected DBManager dbManager;
@@ -167,12 +167,13 @@ public abstract class SimpleItemListView extends ItemListPageView{
 			addItem();
 		}else
 		{
-			itemSelected(item);
+			//由于pos=0是添加命令，故需要-1
+			itemSelected(pos-1, item);
 		}
 	}
 	
 	protected abstract void addItem();
-	protected abstract void itemSelected(DataItem item);
+	protected abstract void itemSelected(int index, DataItem item);
 	
 	protected void itemDeletedReset()
 	{

@@ -33,7 +33,7 @@ public class ActivityAlbum extends SimpleItemListView {
 				// TODO Auto-generated method stub
 				String name=data.getStringExtra("name");
 				DaoAlbum dao=new DaoAlbum();
-				if(dao.exists(dbManager, name, null)==-1)
+				if(dao.exists(dbManager, new DataItem(-1, name), null)==-1)
 				{
 					dao.addItem(dbManager, new DataItem(-1, name));
 					
@@ -57,7 +57,7 @@ public class ActivityAlbum extends SimpleItemListView {
 	}
 
 	@Override
-	protected void itemSelected(DataItem item) {
+	protected void itemSelected(int index, DataItem item) {
 		// TODO Auto-generated method stub
 		Intent intent=new Intent();
 		intent.setClass(this, ActivityImageItem.class);
@@ -78,7 +78,7 @@ public class ActivityAlbum extends SimpleItemListView {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
-				if(dao.deleteItem(dbManager, item.getId(), imageCount>0)==true)
+				if(dao.deleteItem(dbManager, new DataItem(item.getId(),""), imageCount>0)==true)
 				{
 					itemDeletedReset();
 				}

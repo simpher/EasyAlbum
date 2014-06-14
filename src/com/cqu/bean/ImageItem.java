@@ -8,20 +8,20 @@ public class ImageItem extends DataItem{
 	private static final long serialVersionUID = -6276282867568001176L;
 	
 	private int albumId;
-	private String path;
+	private String dir;
 
 	public ImageItem(DataItem item, int albumId, String path) {
 		super(item);
 		// TODO Auto-generated constructor stub
 		this.albumId=albumId;
-		this.path=path;
+		this.dir=path;
 	}
 	
 	public ImageItem(int id, String name, int albumId, String path) {
 		super(id, name);
 		// TODO Auto-generated constructor stub
 		this.albumId=albumId;
-		this.path=path;
+		this.dir=path;
 	}
 	
 	public int getAlbumId()
@@ -29,8 +29,8 @@ public class ImageItem extends DataItem{
 		return this.albumId;
 	}
 	
-	public String getPath()
+	public String getDir()
 	{
-		return this.path;
+		return this.dir;
 	}
 }

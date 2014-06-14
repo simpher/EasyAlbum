@@ -208,12 +208,12 @@ public class DaoAlbum implements GeneralDaoInterface{
 
 
 	@Override
-	public int exists(DBManager dbManager, String name, DataItem parent) {
+	public int exists(DBManager dbManager, DataItem item, DataItem parent) {
 		// TODO Auto-generated method stub
 		SQLiteDatabase db=dbManager.getDB();
 		Cursor c=null;
 		try{
-			String sql="select id from Album where name='"+name+"'";
+			String sql="select id from Album where name='"+item+"'";
 			c=db.rawQuery(sql, null);
 			if(c!=null&&c.getCount()>0)
 			{
@@ -273,7 +273,7 @@ public class DaoAlbum implements GeneralDaoInterface{
 
 
 	@Override
-	public boolean deleteItem(DBManager dbManager, int id, boolean isEmpty) {
+	public boolean deleteItem(DBManager dbManager, DataItem item, boolean isEmpty) {
 		// TODO Auto-generated method stub
 		SQLiteDatabase db=dbManager.getDB();
 		try
@@ -283,13 +283,13 @@ public class DaoAlbum implements GeneralDaoInterface{
 				db.beginTransaction();
 				try{
 					DaoImageItem daoImageItem=new DaoImageItem();
-					Cursor c=db.rawQuery("select id from ImageItem where albumid="+id, null);
+					Cursor c=db.rawQuery("select id from ImageItem where albumid="+item, null);
 					while(c.move(1))
 					{
 						daoImageItem.deleteImageItem(db, c.getInt(0));
 					}
 					
-					DaoGeneral.deleteTableRecord(db, "Album", id);
+					DaoGeneral.deleteTableRecord(db, "Album", item.getId());
 					
 					db.setTransactionSuccessful();
 				}finally
@@ -298,7 +298,7 @@ public class DaoAlbum implements GeneralDaoInterface{
 				}
 			}else
 			{
-				DaoGeneral.deleteTableRecord(db, "DataTable", id);
+				DaoGeneral.deleteTableRecord(db, "Album", item.getId());
 			}
 			
 			return true;
@@ -310,7 +310,7 @@ public class DaoAlbum implements GeneralDaoInterface{
 	}
 	
 	@Override
-	public boolean deleteItems(DBManager dbManager, int[] ids) {
+	public boolean deleteItems(DBManager dbManager, DataItem[] items) {
 		// TODO Auto-generated method stub
 		return false;
 	}
