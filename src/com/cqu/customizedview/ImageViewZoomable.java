@@ -8,7 +8,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ImageView;
 
 public class ImageViewZoomable extends ImageView {
@@ -65,8 +64,7 @@ public class ImageViewZoomable extends ImageView {
 	public boolean onTouchEvent(MotionEvent event) {
 		if(drawableArea==null)
 		{
-			View parentView=(View) this.getParent();
-			drawableArea=new DrawableArea(parentView.getWidth(), parentView.getHeight());
+			drawableArea=new DrawableArea(this.getWidth(), this.getHeight());
 		}
 		switch (event.getAction() & MotionEvent.ACTION_MASK) {
 		case MotionEvent.ACTION_DOWN:
