@@ -57,8 +57,8 @@ public class DrawableArea {
 			int scaledWidth=(int)(this.height*objectRatio);
 			ret[0]=(this.width-scaledWidth)/2;
 			ret[1]=0;
-			ret[3]=ret[0]+scaledWidth;
-			ret[4]=this.height;
+			ret[2]=ret[0]+scaledWidth;
+			ret[3]=this.height;
 		}
 		return ret;
 	}
