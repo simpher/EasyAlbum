@@ -157,7 +157,7 @@ public abstract class ItemListPageView extends Activity implements OperationList
 		return this.curPageNumber;
 	}
 	
-	protected abstract void itemClicked(int pos, DataItem itemName);
+	protected abstract void itemClicked(int pos, DataItem item);
 	
 	protected abstract void searchData();
 	
