@@ -2,6 +2,7 @@ package com.cqu.customizedview;
 
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.widget.TextView;
 
 public class ViewNumberUpdown {
@@ -14,8 +15,9 @@ public class ViewNumberUpdown {
 	private int valueMin=0;
 	private int valueMax=0;
 	private int step=1;
+	private int largerStep=10;
 	
-	public ViewNumberUpdown(int value_init, int value_min, int value_max, int step) {
+	public ViewNumberUpdown(int value_init, int value_min, int value_max, int step, int largerStep) {
 		// TODO Auto-generated constructor stub
 		if(value_init>=value_min&&value_init<=value_max)
 		{
@@ -47,6 +49,10 @@ public class ViewNumberUpdown {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				if(value==valueMin)
+				{
+					return;
+				}
 				if((value-step)<valueMin)
 				{
 					value=valueMin;
@@ -58,11 +64,36 @@ public class ViewNumberUpdown {
 			}
 		});
 		
+		tvDecreaseNumber.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				// TODO Auto-generated method stub
+				if(value==valueMin)
+				{
+					return false;
+				}
+				if((value-largerStep)<valueMin)
+				{
+					value=valueMin;
+				}else
+				{
+					value-=largerStep;
+				}
+				refreshValue();
+				return true;
+			}
+		});
+		
 		tvIncreaseNumber.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				if(value==valueMax)
+				{
+					return;
+				}
 				if((value+step)>valueMax)
 				{
 					value=valueMax;
@@ -71,6 +102,27 @@ public class ViewNumberUpdown {
 					value+=step;
 				}
 				refreshValue();
+			}
+		});
+		
+		tvIncreaseNumber.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				// TODO Auto-generated method stub
+				if(value==valueMax)
+				{
+					return false;
+				}
+				if((value+largerStep)>valueMax)
+				{
+					value=valueMax;
+				}else
+				{
+					value+=largerStep;
+				}
+				refreshValue();
+				return true;
 			}
 		});
 	}

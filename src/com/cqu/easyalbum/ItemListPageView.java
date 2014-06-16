@@ -62,7 +62,7 @@ public abstract class ItemListPageView extends Activity implements OperationList
 		tvDecreaseNumber=(TextView) findViewById(R.id.tvDecreaseNumber);
 		tvIncreaseNumber=(TextView) findViewById(R.id.tvIncreaseNumber);
 		tvNumberValue=(TextView) findViewById(R.id.tvNumberValue);
-		viewNumberUpdown=new ViewNumberUpdown(1, 1, 3, 1);
+		viewNumberUpdown=new ViewNumberUpdown(1, 1, 3, 1, 10);
 		viewNumberUpdown.setViews(tvDecreaseNumber, tvIncreaseNumber, tvNumberValue);
 		
 		etSearchString=(EditText) findViewById(R.id.etTableSearchString);
