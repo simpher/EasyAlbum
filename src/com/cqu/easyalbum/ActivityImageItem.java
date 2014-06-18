@@ -181,6 +181,11 @@ public class ActivityImageItem extends SimpleItemListView{
 		intent.putExtra("album", parent);
 		intent.putExtra("pageModel", pageModel);
 		intent.putExtra("curItemNumber", (getCurPageNumber()-1)*pageModel.countPerPage+index+1);
+		intent.putExtra("curDataViewMode", this.getCurDataViewMode());
+		if(this.getCurDataViewMode()==DataViewMode.MODE_SEARCH_DATA)
+		{
+			intent.putExtra("searchString", this.getSearchString());
+		}
 		startActivity(intent);
 	}
 

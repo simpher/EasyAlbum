@@ -13,9 +13,6 @@ import com.cqu.listadapter.OperationListener;
 
 public abstract class SimpleItemListView extends ItemListPageView{
 	
-	private final int VIEW_MODE_ALL_DATA=0;
-	private final int VIEW_MODE_SEARCH_DATA=1;
-	
 	protected ListAdapter itemListAdapter;
 	protected String headOperation="";
 	private final String HEAD_OPERATION_FOR_VIEW_MODE_SEARCH_DATA="退出搜索视图";
@@ -25,7 +22,7 @@ public abstract class SimpleItemListView extends ItemListPageView{
 	
 	protected DBManager dbManager;
 	
-	private int curViewMode=VIEW_MODE_ALL_DATA;
+	private int curDataViewMode=DataViewMode.MODE_ALL_DATA;
 	private String searchString="";
 	
 	protected GeneralDaoInterface dao;
@@ -43,19 +40,29 @@ public abstract class SimpleItemListView extends ItemListPageView{
 		loadNewPage(1);
 	}
 	
+	protected int getCurDataViewMode()
+	{
+		return this.curDataViewMode;
+	}
+	
 	protected abstract void initData();
 	
 	@Override
 	protected boolean loadNewPage(int pageNumber) {
 		// TODO Auto-generated method stub
 		
-		if(curViewMode==VIEW_MODE_SEARCH_DATA)
+		if(curDataViewMode==DataViewMode.MODE_SEARCH_DATA)
 		{
 			return loadSearchingDataPage(pageNumber);
 		}else
 		{
 			return loadAllDataPage(pageNumber);
 		}
+	}
+	
+	protected String getSearchString()
+	{
+		return this.searchString;
 	}
 	
 	@Override
@@ -70,7 +77,7 @@ public abstract class SimpleItemListView extends ItemListPageView{
 			enableSearchingView(false);
 			
 			dataModel=null;
-			curViewMode=VIEW_MODE_SEARCH_DATA;
+			curDataViewMode=DataViewMode.MODE_SEARCH_DATA;
 			
 			loadSearchingDataPage(1);
 		}
@@ -161,10 +168,10 @@ public abstract class SimpleItemListView extends ItemListPageView{
 		// TODO Auto-generated method stub
 		if(pos==0)
 		{
-			if(curViewMode==VIEW_MODE_SEARCH_DATA)
+			if(curDataViewMode==DataViewMode.MODE_SEARCH_DATA)
 			{
 				dataModel=null;
-				curViewMode=VIEW_MODE_ALL_DATA;
+				curDataViewMode=DataViewMode.MODE_ALL_DATA;
 				loadNewPage(1);
 				
 				enableSearchingView(true);

@@ -9,10 +9,12 @@ import com.cqu.dao.GeneralDaoInterface;
 import com.cqu.db.DBManager;
 import com.cqu.db.DataModel;
 import com.cqu.db.DataModel.PageModel;
+import com.cqu.easyalbum.DataViewMode;
 import com.cqu.easyalbum.R;
 import com.cqu.util.BitmapUtil;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
@@ -37,6 +39,8 @@ public class SimpleImageViewer extends Activity{
 	private DataItem[] itemPage=null;
 	private int totalItem=0;
 	private int curItemNumber;
+	private int curDataViewMode;
+	private String searchString;
 	
 	private Bitmap image;
 	
@@ -46,9 +50,15 @@ public class SimpleImageViewer extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.layout_simple_image_viewer);
 		
-		album=(DataItem) getIntent().getSerializableExtra("album");
-		pageModel=(PageModel) getIntent().getSerializableExtra("pageModel");
-		curItemNumber=getIntent().getIntExtra("curItemNumber", 1);
+		Intent data=getIntent();
+		album=(DataItem) data.getSerializableExtra("album");
+		pageModel=(PageModel) data.getSerializableExtra("pageModel");
+		curItemNumber=data.getIntExtra("curItemNumber", 1);
+		curDataViewMode=data.getIntExtra("curDataViewMode", DataViewMode.MODE_ALL_DATA);
+		if(curDataViewMode==DataViewMode.MODE_SEARCH_DATA)
+		{
+			searchString=data.getStringExtra("searchString");
+		}
 		
 		dbManager=new DBManager(this);
 		dao=new DaoImageItem();
@@ -102,14 +112,14 @@ public class SimpleImageViewer extends Activity{
 		int curPageNumber=(itemNumber-1)/this.pageModel.countPerPage+1;
 		if(itemPage==null)
 		{
-			itemPage=loadAllDataPage(curPageNumber);
+			itemPage=loadNewPage(curPageNumber);
 		}
 		if(itemPage!=null)
 		{
 			if((itemNumber-1)%this.pageModel.countPerPage==0||
 					itemNumber%this.pageModel.countPerPage==0)
 			{
-				itemPage=loadAllDataPage(curPageNumber);
+				itemPage=loadNewPage(curPageNumber);
 			}
 			imageItem=(ImageItem) itemPage[(itemNumber-1)%this.pageModel.countPerPage];
 		}
@@ -134,6 +144,50 @@ public class SimpleImageViewer extends Activity{
 					Toast.makeText(this, "图片过大，系统内存不足", Toast.LENGTH_SHORT).show();
 				}
 			}
+		}
+	}
+	
+	private DataItem[] loadNewPage(int pageNumber)
+	{
+		if(curDataViewMode==DataViewMode.MODE_SEARCH_DATA)
+		{
+			return this.loadSearchDataPage(pageNumber);
+		}else
+		{
+			return this.loadAllDataPage(pageNumber);
+		}
+	}
+	
+	private DataItem[] loadSearchDataPage(int pageNumber)
+	{
+		int pageIndex=pageNumber-1;
+		DataItem[] itemPage=null;
+		
+		if(dataModel==null)
+		{
+			dataModel=dao.searchItem(dbManager, pageModel, pageIndex, searchString, album);
+			if(dataModel!=null)
+			{
+				itemPage=(DataItem[]) dataModel.getPage(pageIndex);
+			}
+		}else
+		{
+			itemPage=(DataItem[]) dataModel.getPage(pageIndex);
+			if(itemPage==null)
+			{
+				dataModel=dao.searchItem(dbManager, pageModel, pageIndex, searchString, album);;
+				
+				itemPage=(DataItem[]) dataModel.getPage(pageIndex);
+			}
+		}
+		if(itemPage==null)
+		{
+			refreshPageNumber(0, dataModel.getTotalItemCount());
+			return null;
+		}else
+		{
+			refreshPageNumber(dataModel.getTotalPageCount(), dataModel.getTotalItemCount());
+			return itemPage;
 		}
 	}
 	
