@@ -297,7 +297,7 @@ public class DaoAlbum implements GeneralDaoInterface{
 				db.beginTransaction();
 				try{
 					DaoImageItem daoImageItem=new DaoImageItem();
-					Cursor c=db.rawQuery("select id from ImageItem where albumid="+item, null);
+					Cursor c=db.rawQuery("select id from ImageItem where albumid="+item.getId(), null);
 					while(c.move(1))
 					{
 						daoImageItem.deleteImageItem(db, c.getInt(0));

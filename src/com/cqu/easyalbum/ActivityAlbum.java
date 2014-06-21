@@ -104,7 +104,7 @@ public class ActivityAlbum extends SimpleItemListView {
 				dialgTaskRunning.setCanceledOnTouchOutside(false);
 				dialgTaskRunning.show();
 				
-				startDeleteTask(item, imageCount>0);
+				startDeleteTask(item, imageCount==0);
 			}
 		});
 		builder.setNegativeButton("取消", null);
